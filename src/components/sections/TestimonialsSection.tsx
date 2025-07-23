@@ -23,7 +23,7 @@ export const TestimonialsSection = () => {
       feedback: "Excellent mentorship and practical training. Started earning within 2 months!",
       avatar: "MH",
       rating: 5,
-      role: "E-commerce Consultant"
+      role: "E Commerce Consultant"
     },
     {
       name: "Fatima Sheikh",

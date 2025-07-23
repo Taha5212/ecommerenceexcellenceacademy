@@ -4,11 +4,11 @@ export const FAQSection = () => {
   const faqs = [
     {
       question: "What is the duration of the program?",
-      answer: "The program is designed to be completed in 3 months with comprehensive training covering all aspects of e-commerce business development."
+      answer: "The program is designed to be completed in 3 months with comprehensive training covering all aspects of e commerce business development."
     },
     {
-      question: "Do I need any prior experience in e-commerce?",
-      answer: "No prior experience is required. Our program is designed for complete beginners and will take you from zero to profitable e-commerce business owner."
+      question: "Do I need any prior experience in e commerce?",
+      answer: "No prior experience is required. Our program is designed for complete beginners and will take you from zero to profitable e commerce business owner."
     },
     {
       question: "Is the training available online or in-person?",
@@ -16,7 +16,7 @@ export const FAQSection = () => {
     },
     {
       question: "What kind of support do I get after completing the program?",
-      answer: "You'll receive ongoing mentorship, access to our alumni network, and continued support to ensure your e-commerce success."
+      answer: "You'll receive ongoing mentorship, access to our alumni network, and continued support to ensure your e commerce success."
     },
     {
       question: "What is the investment for this program?",
@@ -24,7 +24,7 @@ export const FAQSection = () => {
     },
     {
       question: "How do I know if this program is right for me?",
-      answer: "If you're serious about building a successful e-commerce business and willing to put in the work, this program is perfect for you. We provide all the tools, knowledge, and support you need."
+      answer: "If you're serious about building a successful e commerce business and willing to put in the work, this program is perfect for you. We provide all the tools, knowledge, and support you need."
     }
   ];
 

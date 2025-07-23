@@ -11,7 +11,7 @@ export const AchievementsSection = () => {
     {
       image: "/lovable-uploads/6ad70b31-9a43-43e4-808d-04b5cb36ff42.png",
       title: "Excellence Certificate",
-      description: "Achievement in e-commerce training"
+      description: "Achievement in e commerce training"
     },
     {
       image: "/lovable-uploads/6bd9f11a-0298-4360-b767-de3df666c974.png",

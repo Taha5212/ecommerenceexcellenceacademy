@@ -10,7 +10,7 @@ export const ProgramSection = () => {
     'Dropshipping',
     'Basics of Artificial Intelligence',
     'Basics of Digital Marketing',
-    'English Language for E-Commerce'
+    'English Language for E Commerce'
   ];
 
   return (
@@ -21,7 +21,7 @@ export const ProgramSection = () => {
             Our Premium Training Program
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto px-2 leading-relaxed">
-            Learn everything you need to build a successful e-commerce business in just 3 months. 
+            Learn everything you need to build a successful e commerce business in just 3 months. 
             This comprehensive program covers:
           </p>
         </div>
@@ -77,7 +77,7 @@ export const ProgramSection = () => {
 
             <div className="bg-gradient-accent p-4 sm:p-6 lg:p-8 rounded-lg text-center mx-2 sm:mx-0">
               <h4 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-primary mb-3 sm:mb-4">
-                Start Your E-Commerce Journey Today
+                Start Your E Commerce Journey Today
               </h4>
               <p className="text-primary/80 text-sm sm:text-base lg:text-lg">
                 Join hundreds of successful students who have transformed their lives

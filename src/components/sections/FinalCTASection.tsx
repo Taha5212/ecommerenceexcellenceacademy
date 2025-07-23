@@ -22,7 +22,7 @@ export const FinalCTASection = () => {
           
           <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-white/90 mb-6 sm:mb-8 leading-relaxed px-2">
             Join hundreds of successful students who have already transformed their lives. 
-            Your e-commerce journey starts with a single step.
+            Your e commerce journey starts with a single step.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 mb-8 sm:mb-12">

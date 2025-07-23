@@ -38,7 +38,7 @@ export const CTASection = () => {
           </div>
           
           <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-white/90 mb-6 sm:mb-8 lg:mb-10 leading-relaxed max-w-2xl mx-auto px-2">
-            Don't wait any longer. Join thousands of successful students who have already transformed their lives through our premium e-commerce training program.
+            Don't wait any longer. Join thousands of successful students who have already transformed their lives through our premium e commerce training program.
           </p>
           
           <Button 
