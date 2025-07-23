@@ -78,8 +78,9 @@ export const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block flex-shrink-0">
-            <div className="ml-4 lg:ml-10 flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Main Navigation Links */}
+            <div className="flex items-center space-x-1">
               {navItems.map((item) => (
                 <button
                   key={item.name}
@@ -96,6 +97,22 @@ export const Navigation = () => {
                   }`}></span>
                 </button>
               ))}
+            </div>
+            
+            {/* Auth Links */}
+            <div className="flex items-center space-x-2 ml-4 border-l border-white/20 pl-4">
+              <button
+                onClick={() => navigate('/auth?tab=login')}
+                className="px-4 py-2 text-sm font-medium text-white/90 hover:text-brand-gold transition-all duration-300 rounded-lg hover:bg-white/10 hover:scale-105"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate('/auth?tab=signup')}
+                className="px-4 py-2 text-sm font-medium bg-brand-gold text-primary hover:bg-brand-gold/90 transition-all duration-300 rounded-lg hover:scale-105 shadow-lg"
+              >
+                Signup
+              </button>
             </div>
           </div>
 
@@ -120,6 +137,7 @@ export const Navigation = () => {
           isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}>
           <div className="px-2 pt-2 pb-3 space-y-1 bg-gradient-nav/95 border-t border-white/20 backdrop-blur-sm">
+            {/* Main Navigation Links */}
             {navItems.map((item, index) => (
               <button
                 key={item.name}
@@ -138,6 +156,38 @@ export const Navigation = () => {
                 {item.name}
               </button>
             ))}
+            
+            {/* Mobile Auth Links */}
+            <div className="border-t border-white/20 pt-3 mt-3 space-y-2">
+              <button
+                onClick={() => {
+                  navigate('/auth?tab=login');
+                  setIsOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-white/90 hover:text-brand-gold hover:bg-white/10 ${
+                  isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                }`}
+                style={{
+                  transitionDelay: isOpen ? `${(navItems.length) * 50}ms` : '0ms'
+                }}
+              >
+                Login
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/auth?tab=signup');
+                  setIsOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 bg-brand-gold text-primary hover:bg-brand-gold/90 shadow-lg ${
+                  isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                }`}
+                style={{
+                  transitionDelay: isOpen ? `${(navItems.length + 1) * 50}ms` : '0ms'
+                }}
+              >
+                Signup
+              </button>
+            </div>
           </div>
         </div>
       </div>
