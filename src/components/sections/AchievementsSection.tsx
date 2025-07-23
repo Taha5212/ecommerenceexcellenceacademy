@@ -9,7 +9,7 @@ export const AchievementsSection = () => {
       description: "Recognizing outstanding performance"
     },
     {
-      image: "/lovable-uploads/41aa09d2-4c19-4e3f-9a8d-7774a9fafa1a.png",
+      image: "/lovable-uploads/6ad70b31-9a43-43e4-808d-04b5cb36ff42.png",
       title: "Excellence Certificate",
       description: "Achievement in e-commerce training"
     },
