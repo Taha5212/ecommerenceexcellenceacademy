@@ -49,20 +49,20 @@ export const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-slate-50/50">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16 animate-fade-in-up">
-          <h2 className="font-montserrat font-bold text-4xl lg:text-5xl text-primary mb-6">
+    <section className="py-16 sm:py-20 bg-gradient-to-b from-white to-slate-50/50">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
+          <h2 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary mb-4 sm:mb-6 px-2">
             Hear From Our Successful Students
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
             Real stories from real students who have transformed their lives through our program
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="p-6 shadow-2xl border-0 bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-500 transform hover:scale-105 hover:shadow-premium group rounded-2xl ring-1 ring-primary/5">
+            <Card key={index} className="p-4 sm:p-6 shadow-2xl border-0 bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-500 transform hover:scale-105 hover:shadow-premium group rounded-xl sm:rounded-2xl ring-1 ring-primary/5 mx-2 sm:mx-0">
               <div className="flex items-center space-x-4 mb-6">
                 <Avatar className="w-16 h-16 ring-2 ring-accent/20">
                   <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-bold text-lg">

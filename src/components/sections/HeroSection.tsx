@@ -73,8 +73,8 @@ export const HeroSection = () => {
         <div className="absolute bottom-1/3 left-1/6 w-80 h-80 bg-gradient-to-tr from-brand-gold/[0.02] to-transparent rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative container pt-28 pb-20 lg:pt-32 lg:pb-24">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[calc(100vh-8rem)]">
+      <div className="relative container px-4 sm:px-6 pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-8rem)]">
           {/* Left side - Video */}
           <div className="animate-slide-in-left">
             <Card className="overflow-hidden shadow-premium border-0 bg-white/95 backdrop-blur-sm rounded-3xl ring-1 ring-brand-blue/5 hover:shadow-elegant transition-all duration-700 hover:scale-[1.02] hover:ring-brand-blue/10">
@@ -92,22 +92,22 @@ export const HeroSection = () => {
 
           {/* Right side - Form */}
           <div className="animate-slide-in-right space-y-8 lg:space-y-10">
-            <div className="text-center lg:text-left space-y-6">
-              <h1 className="font-montserrat font-bold text-4xl lg:text-5xl xl:text-6xl text-brand-blue leading-[1.1] tracking-tight">
+            <div className="text-center lg:text-left space-y-4 sm:space-y-6">
+              <h1 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brand-blue leading-[1.1] tracking-tight px-2 sm:px-0">
                 Transform Your Future with 
-                <span className="text-brand-gold block bg-gradient-to-r from-brand-gold to-brand-gold/90 bg-clip-text text-transparent mt-2">
+                <span className="text-brand-gold block bg-gradient-to-r from-brand-gold to-brand-gold/90 bg-clip-text text-transparent mt-1 sm:mt-2">
                   E-Commerce Excellence
                 </span>
               </h1>
-              <p className="text-lg lg:text-xl text-brand-blue/80 font-medium leading-relaxed max-w-lg">
+              <p className="text-base sm:text-lg lg:text-xl text-brand-blue/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0 px-2 sm:px-0">
                 Master Amazon FBA, Dropshipping & Digital Marketing in just 3 months
               </p>
             </div>
 
-            <Card className="p-8 lg:p-12 shadow-premium border-0 bg-white/97 backdrop-blur-md rounded-3xl ring-1 ring-brand-blue/8 hover:shadow-elegant transition-all duration-700 hover:scale-[1.01] hover:ring-brand-blue/12">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="text-center mb-8">
-                  <h3 className="font-montserrat font-bold text-3xl text-brand-blue bg-gradient-to-r from-brand-blue to-brand-teal bg-clip-text text-transparent mb-4">
+            <Card className="p-4 sm:p-6 md:p-8 lg:p-12 shadow-premium border-0 bg-white/97 backdrop-blur-md rounded-2xl sm:rounded-3xl ring-1 ring-brand-blue/8 hover:shadow-elegant transition-all duration-700 hover:scale-[1.01] hover:ring-brand-blue/12 mx-2 sm:mx-0">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <div className="text-center mb-6 sm:mb-8">
+                  <h3 className="font-montserrat font-bold text-xl sm:text-2xl md:text-3xl text-brand-blue bg-gradient-to-r from-brand-blue to-brand-teal bg-clip-text text-transparent mb-3 sm:mb-4">
                     Enroll Now
                   </h3>
                   <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-50 to-red-100 rounded-full border border-red-200">
@@ -116,42 +116,42 @@ export const HeroSection = () => {
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div>
-                    <Label htmlFor="fullName" className="text-sm font-semibold text-brand-blue/80 mb-3 block">Full Name</Label>
+                    <Label htmlFor="fullName" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">Full Name</Label>
                     <Input 
                       id="fullName" 
                       type="text" 
                       placeholder="Enter your full name" 
                       value={formData.fullName} 
                       onChange={e => handleInputChange('fullName', e.target.value)} 
-                      className="h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-xl bg-white/95 text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
+                      className="h-12 sm:h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
                       required 
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="phone" className="text-sm font-semibold text-brand-blue/80 mb-3 block">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">Phone Number</Label>
                     <Input 
                       id="phone" 
                       type="tel" 
                       placeholder="Enter your phone number" 
                       value={formData.phone} 
                       onChange={e => handleInputChange('phone', e.target.value)} 
-                      className="h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-xl bg-white/95 text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
+                      className="h-12 sm:h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
                       required 
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="email" className="text-sm font-semibold text-brand-blue/80 mb-3 block">Email Address</Label>
+                    <Label htmlFor="email" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">Email Address</Label>
                     <Input 
                       id="email" 
                       type="email" 
                       placeholder="Enter your email address" 
                       value={formData.email} 
                       onChange={e => handleInputChange('email', e.target.value)} 
-                      className="h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-xl bg-white/95 text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
+                      className="h-12 sm:h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
                       required 
                     />
                   </div>
@@ -159,12 +159,13 @@ export const HeroSection = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-16 text-xl font-bold bg-gradient-to-r from-brand-blue to-brand-blue/90 text-white hover:from-brand-gold hover:to-brand-gold/90 hover:text-brand-blue transition-all duration-500 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg rounded-xl border-0 ring-2 ring-brand-blue/20 hover:ring-brand-gold/30"
+                  className="w-full h-12 sm:h-14 md:h-16 text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-brand-blue to-brand-blue/90 text-white hover:from-brand-gold hover:to-brand-gold/90 hover:text-brand-blue transition-all duration-500 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg rounded-lg sm:rounded-xl border-0 ring-2 ring-brand-blue/20 hover:ring-brand-gold/30"
                 >
-                  Enroll Now — Limited Seats Left
+                  <span className="hidden sm:inline">Enroll Now — Limited Seats Left</span>
+                  <span className="sm:hidden">Enroll Now</span>
                 </Button>
 
-                <p className="text-center text-brand-gold font-bold text-lg mt-6 bg-gradient-to-r from-brand-gold to-brand-gold/80 bg-clip-text text-transparent">
+                <p className="text-center text-brand-gold font-bold text-base sm:text-lg mt-4 sm:mt-6 bg-gradient-to-r from-brand-gold to-brand-gold/80 bg-clip-text text-transparent">
                   "Transform your future in just 3 months!"
                 </p>
               </form>

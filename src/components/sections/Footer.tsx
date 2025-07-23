@@ -50,10 +50,10 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg mb-4">Legal</h4>
             <div className="space-y-3">
-              <a href="#" className="block text-white/80 hover:text-accent transition-all duration-300 hover:translate-x-1">
+              <a href="/privacy-policy" className="block text-white/80 hover:text-accent transition-all duration-300 hover:translate-x-1">
                 Privacy Policy
               </a>
-              <a href="#" className="block text-white/80 hover:text-accent transition-all duration-300 hover:translate-x-1">
+              <a href="/terms-of-service" className="block text-white/80 hover:text-accent transition-all duration-300 hover:translate-x-1">
                 Terms of Service
               </a>
             </div>
