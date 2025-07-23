@@ -145,7 +145,7 @@ export const Navigation = () => {
                      </button>
                    </DropdownMenuTrigger>
                    <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg z-[100]">
-                     <DropdownMenuItem onClick={() => navigate('/analytics')} className="cursor-pointer">
+                     <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer">
                        <BarChart3 className="h-4 w-4 mr-2" />
                        Dashboard
                      </DropdownMenuItem>
@@ -245,7 +245,7 @@ export const Navigation = () => {
                   </div>
                   <button
                     onClick={() => {
-                      navigate('/analytics');
+                      navigate('/dashboard');
                       setIsOpen(false);
                     }}
                     className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-white/90 hover:text-brand-gold hover:bg-white/10 ${
