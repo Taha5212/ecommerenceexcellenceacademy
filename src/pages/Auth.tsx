@@ -134,7 +134,8 @@ export const Auth = () => {
       trackSignup('email');
       toast({
         title: "Account Created!",
-        description: "Please check your email to verify your account.",
+        description: "Please check your email and click the confirmation link to activate your account.",
+        duration: 8000
       });
       
       navigate('/');
