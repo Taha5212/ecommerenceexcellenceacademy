@@ -127,7 +127,7 @@ export const HeroSection = () => {
               <div className="aspect-video p-1">
                 <iframe 
                   src="https://www.youtube.com/embed/cPbFSvDd9aU" 
-                  title="E Commerce Excellence Academy" 
+                  title="Ecommerence Excellence Academy" 
                   className="w-full h-full rounded-2xl shadow-lg" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                   allowFullScreen
@@ -141,7 +141,7 @@ export const HeroSection = () => {
             <div className="text-center lg:text-left space-y-4 sm:space-y-6">
               <h1 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brand-blue leading-[1.1] tracking-tight px-2 sm:px-0">
                 <span className="text-brand-gold block bg-gradient-to-r from-brand-gold to-brand-gold/90 bg-clip-text text-transparent mt-1 sm:mt-2">
-                  E Commerce Excellence Academy
+                  Ecommerence Excellence Academy
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-brand-blue/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0 px-2 sm:px-0">

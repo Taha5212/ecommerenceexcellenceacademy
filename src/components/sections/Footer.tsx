@@ -9,7 +9,7 @@ export const Footer = () => {
           {/* Company Info */}
           <div>
             <h3 className="font-montserrat font-bold text-2xl mb-4 text-accent">
-              E Commerce Excellence Academy
+              Ecommerence Excellence Academy
             </h3>
             <p className="text-white/80 leading-relaxed">
               Transforming lives through premium e commerce education and practical training.
@@ -76,7 +76,7 @@ export const Footer = () => {
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center">
           <p className="text-white/60">
-            © 2025 E Commerce Excellence Academy. All rights reserved.
+            © 2025 Ecommerence Excellence Academy. All rights reserved.
           </p>
         </div>
       </div>

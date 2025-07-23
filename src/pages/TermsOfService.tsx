@@ -16,7 +16,7 @@ const TermsOfService = () => {
           <section className="space-y-4">
             <h2 className="font-semibold text-2xl text-primary">1. Acceptance of Terms</h2>
             <p>
-              By accessing and using the services provided by E Commerce Excellence Academy, 
+              By accessing and using the services provided by Ecommerence Excellence Academy, 
               you accept and agree to be bound by the terms and provision of this agreement.
             </p>
           </section>
@@ -44,7 +44,7 @@ const TermsOfService = () => {
             <h2 className="font-semibold text-2xl text-primary">4. Intellectual Property</h2>
             <p>
               All course materials, including but not limited to videos, documents, and presentations, 
-              are the intellectual property of E Commerce Excellence Academy. Unauthorized reproduction, 
+              are the intellectual property of Ecommerence Excellence Academy. Unauthorized reproduction, 
               distribution, or sale of these materials is strictly prohibited.
             </p>
           </section>
@@ -73,7 +73,7 @@ const TermsOfService = () => {
           <section className="space-y-4">
             <h2 className="font-semibold text-2xl text-primary">7. Limitation of Liability</h2>
             <p>
-              E Commerce Excellence Academy shall not be liable for any indirect, incidental, 
+              Ecommerence Excellence Academy shall not be liable for any indirect, incidental, 
               special, or consequential damages resulting from the use or inability to use our services, 
               even if we have been advised of the possibility of such damages.
             </p>
@@ -102,7 +102,7 @@ const TermsOfService = () => {
               If you have any questions about these Terms of Service, please contact us at:
             </p>
             <div className="bg-secondary/20 p-4 rounded-lg">
-              <p><strong>E Commerce Excellence Academy</strong></p>
+              <p><strong>Ecommerence Excellence Academy</strong></p>
               <p>Email: ecommerceexcellenceacademy@outlook.com</p>
               <p>Phone: +92 370 2041152</p>
               <p>Address: C-2, Block D, North Nazimabad, Karachi</p>

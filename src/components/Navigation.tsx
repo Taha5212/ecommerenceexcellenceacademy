@@ -73,7 +73,7 @@ export const Navigation = () => {
               onClick={() => handleNavigation('#hero')}
               className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg"
             >
-              E Commerce Excellence Academy
+              Ecommerence Excellence Academy
             </button>
           </div>
 
