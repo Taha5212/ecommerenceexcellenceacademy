@@ -26,7 +26,14 @@ export const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-accent flex-shrink-0" />
-                <span className="text-white/80">+92 370 2041152</span>
+                <a 
+                  href="https://wa.me/923702041152" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/80 hover:text-accent hover:underline transition-all duration-300 cursor-pointer"
+                >
+                  +92 370 2041152
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-accent flex-shrink-0" />

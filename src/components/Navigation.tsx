@@ -51,10 +51,13 @@ export const Navigation = () => {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <div className="flex-shrink-0 min-w-0 flex-1 md:flex-none">
-            <h2 className="font-montserrat font-bold text-sm sm:text-base md:text-xl text-white tracking-tight truncate">
+            <button
+              onClick={() => scrollToSection('#hero')}
+              className="font-montserrat font-bold text-sm sm:text-base md:text-xl text-white tracking-tight truncate hover:text-brand-gold transition-colors duration-300 cursor-pointer"
+            >
               <span className="hidden sm:inline">E-Commerce Excellence</span>
               <span className="sm:hidden">E-Commerce</span>
-            </h2>
+            </button>
           </div>
 
           {/* Desktop Navigation */}
