@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Menu, X, User, LogOut, Settings, Lock } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Menu, X, User, LogOut, Settings, Lock, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { EditProfileModal } from '@/components/EditProfileModal';
@@ -23,7 +24,7 @@ export const Navigation = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading, signOut, displayName } = useAuth();
+  const { user, profile, loading, signOut, displayName } = useAuth();
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -134,13 +135,18 @@ export const Navigation = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white/90 hover:text-brand-gold transition-all duration-300 rounded-lg hover:bg-white/10">
-                      <User className="h-4 w-4" />
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={profile?.avatar_url || ''} />
+                        <AvatarFallback className="text-xs bg-white/20 text-white border border-white/30">
+                          {displayName?.charAt(0)?.toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
                        <span className="max-w-32 truncate">{displayName}</span>
                      </button>
                    </DropdownMenuTrigger>
                    <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg z-[100]">
                      <DropdownMenuItem onClick={() => navigate('/analytics')} className="cursor-pointer">
-                       <User className="h-4 w-4 mr-2" />
+                       <BarChart3 className="h-4 w-4 mr-2" />
                        Dashboard
                      </DropdownMenuItem>
                      <DropdownMenuItem onClick={() => setShowEditProfile(true)} className="cursor-pointer">
@@ -229,7 +235,12 @@ export const Navigation = () => {
                   style={{
                     transitionDelay: isOpen ? `${navItems.length * 50}ms` : '0ms'
                   }}>
-                    <User className="h-4 w-4" />
+                    <Avatar className="h-5 w-5">
+                      <AvatarImage src={profile?.avatar_url || ''} />
+                      <AvatarFallback className="text-xs bg-white/20 text-white border border-white/30">
+                        {displayName?.charAt(0)?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
                     <span className="truncate">{displayName}</span>
                   </div>
                   <button
