@@ -71,10 +71,23 @@ export const Navigation = () => {
           <div className="flex-shrink-0 min-w-0 flex-1 md:flex-none">
             <button
               onClick={() => handleNavigation('#hero')}
-              className="font-montserrat font-bold text-sm sm:text-base md:text-xl text-white tracking-tight truncate hover:text-brand-gold transition-all duration-300 cursor-pointer"
+              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group"
             >
-              <span className="hidden sm:inline">E-Commerce Excellence</span>
-              <span className="sm:hidden">E-Commerce</span>
+              {/* Mobile: Smaller text with line break */}
+              <div className="block xs:hidden text-xs leading-tight">
+                <div>E-Commerce</div>
+                <div>Excellence</div>
+              </div>
+              
+              {/* Small screens: Abbreviated version */}
+              <div className="hidden xs:block sm:hidden text-sm">
+                Excellence Academy
+              </div>
+              
+              {/* Medium+ screens: Full name */}
+              <div className="hidden sm:block text-base md:text-xl">
+                E-Commerce Excellence Academy
+              </div>
             </button>
           </div>
 
