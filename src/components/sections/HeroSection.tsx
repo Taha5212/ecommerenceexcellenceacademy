@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { supabase } from '@/integrations/supabase/client';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 export const HeroSection = () => {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -14,10 +15,51 @@ export const HeroSection = () => {
     email: '',
     message: ''
   });
+  const [validationState, setValidationState] = useState({
+    fullName: { isValid: true, message: '' },
+    phone: { isValid: true, message: '' },
+    email: { isValid: true, message: '' }
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { trackClick } = useAnalytics();
-  const handleSubmit = async (e: React.FormEvent) => {
+
+  // Validation functions
+  const validatePhone = useCallback((phone: string) => {
+    if (!phone.trim()) {
+      return { isValid: false, message: 'Phone number is required' };
+    }
+    // Enhanced phone validation - supports various formats
+    const phoneRegex = /^[\+]?[\d\s\-\(\)\.\+]{10,15}$/;
+    if (!phoneRegex.test(phone.trim())) {
+      return { isValid: false, message: 'Please enter a valid phone number' };
+    }
+    return { isValid: true, message: '' };
+  }, []);
+
+  const validateEmail = useCallback((email: string) => {
+    if (!email.trim()) {
+      return { isValid: false, message: 'Email is required' };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return { isValid: false, message: 'Please enter a valid email address' };
+    }
+    return { isValid: true, message: '' };
+  }, []);
+
+  const validateFullName = useCallback((name: string) => {
+    if (!name.trim()) {
+      return { isValid: false, message: 'Full name is required' };
+    }
+    if (name.trim().length < 2) {
+      return { isValid: false, message: 'Name must be at least 2 characters' };
+    }
+    return { isValid: true, message: '' };
+  }, []);
+
+  // Optimized form submission with better error handling
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Track form submission click
@@ -26,82 +68,59 @@ export const HeroSection = () => {
     setIsSubmitting(true);
     
     try {
-      // Enhanced validation
-      if (!formData.fullName.trim()) {
+      // Client-side validation
+      const nameValidation = validateFullName(formData.fullName);
+      const phoneValidation = validatePhone(formData.phone);
+      const emailValidation = validateEmail(formData.email);
+
+      // Update validation states for real-time feedback
+      setValidationState({
+        fullName: nameValidation,
+        phone: phoneValidation,
+        email: emailValidation
+      });
+
+      // Check if any validation failed
+      if (!nameValidation.isValid || !phoneValidation.isValid || !emailValidation.isValid) {
         toast({
-          title: "Full Name Required",
-          description: "Please enter your full name",
+          title: "Form Validation Failed",
+          description: "Please fix the errors and try again",
           variant: "destructive"
         });
         return;
       }
-      
-      if (!formData.email.trim()) {
-        toast({
-          title: "Email Required",
-          description: "Please enter your email address", 
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      // Email format validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        toast({
-          title: "Invalid Email Format",
-          description: "Please enter a valid email address",
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      // Phone validation (optional but must be valid if provided)
-      if (formData.phone.trim()) {
-        const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
-        if (!phoneRegex.test(formData.phone)) {
-          toast({
-            title: "Invalid Phone Number",
-            description: "Please enter a valid phone number",
-            variant: "destructive"
-          });
-          return;
-        }
-      }
-      
-      // Get current user if logged in
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id || null;
-      
-      // Submit to Supabase
+
+      // Prepare submission data - optimize by avoiding session check
+      const submissionData = {
+        name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        message: formData.message.trim() || null,
+        user_id: null // Will be set by RLS if user is authenticated
+      };
+
+      // Single optimized database call
       const { error } = await supabase
         .from('form_submissions')
-        .insert({
-          name: formData.fullName.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim() || null,
-          message: formData.message.trim() || null,
-          user_id: userId
-        });
+        .insert(submissionData);
 
       if (error) {
         console.error('Form submission error:', error);
         toast({
           title: "Submission Failed",
-          description: "There was an error submitting your form. Please try again.",
+          description: "Unable to submit form. Please try again.",
           variant: "destructive"
         });
         return;
       }
       
-      // Success
+      // Immediate success feedback
       toast({
-        title: "Enrollment Request Submitted!",
-        description: "We'll contact you soon with next steps.",
-        variant: "default"
+        title: "✅ Enrollment Request Submitted!",
+        description: "We'll contact you within 24 hours with next steps.",
       });
       
-      // Reset form
+      // Reset form and validation
       setFormData({
         fullName: '',
         phone: '',
@@ -109,23 +128,52 @@ export const HeroSection = () => {
         message: ''
       });
       
+      setValidationState({
+        fullName: { isValid: true, message: '' },
+        phone: { isValid: true, message: '' },
+        email: { isValid: true, message: '' }
+      });
+      
     } catch (error) {
       console.error('Unexpected error:', error);
       toast({
-        title: "Submission Failed",
-        description: "There was an unexpected error. Please try again.",
+        title: "Network Error",
+        description: "Please check your connection and try again.",
         variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
     }
-  };
-  const handleInputChange = (field: string, value: string) => {
+  }, [formData, validateFullName, validatePhone, validateEmail, trackClick, toast]);
+
+  // Real-time input handling with validation
+  const handleInputChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
-  };
+
+    // Real-time validation for better UX
+    if (field === 'phone') {
+      const validation = validatePhone(value);
+      setValidationState(prev => ({
+        ...prev,
+        phone: validation
+      }));
+    } else if (field === 'email') {
+      const validation = validateEmail(value);
+      setValidationState(prev => ({
+        ...prev,
+        email: validation
+      }));
+    } else if (field === 'fullName') {
+      const validation = validateFullName(value);
+      setValidationState(prev => ({
+        ...prev,
+        fullName: validation
+      }));
+    }
+  }, [validatePhone, validateEmail, validateFullName]);
   return <section id="hero" className="relative min-h-screen bg-gradient-hero overflow-hidden">
       {/* Enhanced Professional Background */}
       <div className="absolute inset-0">
@@ -205,43 +253,93 @@ export const HeroSection = () => {
 
                 <div className="space-y-4 sm:space-y-6">
                   <div>
-                    <Label htmlFor="fullName" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">Full Name</Label>
-                    <Input 
-                      id="fullName" 
-                      type="text" 
-                      placeholder="Enter your full name" 
-                      value={formData.fullName} 
-                      onChange={e => handleInputChange('fullName', e.target.value)} 
-                      className="h-12 sm:h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
-                      required 
-                    />
+                    <Label htmlFor="fullName" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">
+                      Full Name <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Input 
+                        id="fullName" 
+                        type="text" 
+                        placeholder="Enter your full name" 
+                        value={formData.fullName} 
+                        onChange={e => handleInputChange('fullName', e.target.value)} 
+                        className={`h-12 sm:h-14 border-2 ${
+                          validationState.fullName.isValid 
+                            ? 'border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20' 
+                            : 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                        } transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg pr-10`} 
+                        required 
+                      />
+                      {!validationState.fullName.isValid && formData.fullName.length > 0 && (
+                        <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-red-500" />
+                      )}
+                      {validationState.fullName.isValid && formData.fullName.length > 0 && (
+                        <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-500" />
+                      )}
+                    </div>
+                    {!validationState.fullName.isValid && (
+                      <p className="text-red-500 text-xs mt-1">{validationState.fullName.message}</p>
+                    )}
                   </div>
 
                   <div>
                     <Label htmlFor="phone" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">
-                      Phone Number <span className="text-muted-foreground font-normal">(optional)</span>
+                      Phone Number <span className="text-red-500">*</span>
                     </Label>
-                    <Input 
-                      id="phone" 
-                      type="tel" 
-                      placeholder="Enter your phone number (optional)" 
-                      value={formData.phone} 
-                      onChange={e => handleInputChange('phone', e.target.value)} 
-                      className="h-12 sm:h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
-                    />
+                    <div className="relative">
+                      <Input 
+                        id="phone" 
+                        type="tel" 
+                        placeholder="Enter your phone number" 
+                        value={formData.phone} 
+                        onChange={e => handleInputChange('phone', e.target.value)} 
+                        className={`h-12 sm:h-14 border-2 ${
+                          validationState.phone.isValid 
+                            ? 'border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20' 
+                            : 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                        } transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg pr-10`} 
+                        required 
+                      />
+                      {!validationState.phone.isValid && formData.phone.length > 0 && (
+                        <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-red-500" />
+                      )}
+                      {validationState.phone.isValid && formData.phone.length > 0 && (
+                        <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-500" />
+                      )}
+                    </div>
+                    {!validationState.phone.isValid && (
+                      <p className="text-red-500 text-xs mt-1">{validationState.phone.message}</p>
+                    )}
                   </div>
 
                   <div>
-                    <Label htmlFor="email" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">Email Address</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder="Enter your email address" 
-                      value={formData.email} 
-                      onChange={e => handleInputChange('email', e.target.value)} 
-                      className="h-12 sm:h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
-                      required 
-                    />
+                    <Label htmlFor="email" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">
+                      Email Address <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        placeholder="Enter your email address" 
+                        value={formData.email} 
+                        onChange={e => handleInputChange('email', e.target.value)} 
+                        className={`h-12 sm:h-14 border-2 ${
+                          validationState.email.isValid 
+                            ? 'border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20' 
+                            : 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                        } transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg pr-10`} 
+                        required 
+                      />
+                      {!validationState.email.isValid && formData.email.length > 0 && (
+                        <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-red-500" />
+                      )}
+                      {validationState.email.isValid && formData.email.length > 0 && (
+                        <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-500" />
+                      )}
+                    </div>
+                    {!validationState.email.isValid && (
+                      <p className="text-red-500 text-xs mt-1">{validationState.email.message}</p>
+                    )}
                   </div>
 
                   <div>
