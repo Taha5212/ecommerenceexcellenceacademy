@@ -126,7 +126,7 @@ export const HeroSection = () => {
             <Card className="overflow-hidden shadow-premium border-0 bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl ring-1 ring-brand-blue/5 hover:shadow-elegant transition-all duration-700 hover:scale-[1.01] hover:ring-brand-blue/10 mx-1 sm:mx-0">
               <div className="aspect-video p-1">
                 <iframe 
-                  src="https://www.youtube.com/embed/Y6h7VOsMqIk" 
+                  src="https://www.youtube.com/embed/cPbFSvDd9aU" 
                   title="E-Commerce Excellence Academy" 
                   className="w-full h-full rounded-2xl shadow-lg" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
