@@ -140,7 +140,7 @@ export const HeroSection = () => {
           <div className="animate-slide-in-right space-y-8 lg:space-y-10">
             <div className="text-center lg:text-left space-y-4 sm:space-y-6">
               <h1 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brand-blue leading-[1.1] tracking-tight px-2 sm:px-0">
-                Transform Your Future with
+                E Commerce Excellence Academy
                 <span className="text-brand-gold block bg-gradient-to-r from-brand-gold to-brand-gold/90 bg-clip-text text-transparent mt-1 sm:mt-2">
                   E Commerce Excellence Academy
                 </span>
