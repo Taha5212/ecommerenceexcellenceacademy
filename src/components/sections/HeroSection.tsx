@@ -15,17 +15,63 @@ export const HeroSection = () => {
   } = useToast();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.phone || !formData.email) {
+    
+    // Enhanced validation
+    if (!formData.fullName.trim()) {
       toast({
-        title: "Please fill in all fields",
+        title: "Full Name Required",
+        description: "Please enter your full name",
         variant: "destructive"
       });
       return;
     }
+    
+    if (!formData.phone.trim()) {
+      toast({
+        title: "Phone Number Required", 
+        description: "Please enter your phone number",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!formData.email.trim()) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address", 
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid Email Format",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Phone validation (basic)
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid phone number",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     toast({
       title: "Enrollment Request Submitted!",
-      description: "We'll contact you soon with next steps."
+      description: "We'll contact you soon with next steps.",
+      variant: "default"
     });
+    
     setFormData({
       fullName: '',
       phone: '',
@@ -73,11 +119,11 @@ export const HeroSection = () => {
         <div className="absolute bottom-1/3 left-1/6 w-80 h-80 bg-gradient-to-tr from-brand-gold/[0.02] to-transparent rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative container px-4 sm:px-6 pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-8rem)]">
+      <div className="relative container px-3 sm:px-4 md:px-6 pt-20 pb-12 sm:pt-24 sm:pb-16 lg:pt-32 lg:pb-24">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20 items-center min-h-[calc(100vh-5rem)] sm:min-h-[calc(100vh-6rem)] lg:min-h-[calc(100vh-8rem)]">
           {/* Left side - Video */}
           <div className="animate-slide-in-left">
-            <Card className="overflow-hidden shadow-premium border-0 bg-white/95 backdrop-blur-sm rounded-3xl ring-1 ring-brand-blue/5 hover:shadow-elegant transition-all duration-700 hover:scale-[1.02] hover:ring-brand-blue/10">
+            <Card className="overflow-hidden shadow-premium border-0 bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl ring-1 ring-brand-blue/5 hover:shadow-elegant transition-all duration-700 hover:scale-[1.01] hover:ring-brand-blue/10 mx-1 sm:mx-0">
               <div className="aspect-video p-1">
                 <iframe 
                   src="https://www.youtube.com/embed/Y6h7VOsMqIk" 
@@ -104,7 +150,7 @@ export const HeroSection = () => {
               </p>
             </div>
 
-            <Card className="p-4 sm:p-6 md:p-8 lg:p-12 shadow-premium border-0 bg-white/97 backdrop-blur-md rounded-2xl sm:rounded-3xl ring-1 ring-brand-blue/8 hover:shadow-elegant transition-all duration-700 hover:scale-[1.01] hover:ring-brand-blue/12 mx-2 sm:mx-0">
+            <Card className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-12 shadow-premium border-0 bg-white/97 backdrop-blur-md rounded-xl sm:rounded-2xl lg:rounded-3xl ring-1 ring-brand-blue/8 hover:shadow-elegant transition-all duration-700 hover:scale-[1.005] hover:ring-brand-blue/12 mx-1 sm:mx-0">
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <div className="text-center mb-6 sm:mb-8">
                   <h3 className="font-montserrat font-bold text-xl sm:text-2xl md:text-3xl text-brand-blue bg-gradient-to-r from-brand-blue to-brand-teal bg-clip-text text-transparent mb-3 sm:mb-4">
@@ -159,7 +205,7 @@ export const HeroSection = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 sm:h-14 md:h-16 text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-brand-blue to-brand-blue/90 text-white hover:from-brand-gold hover:to-brand-gold/90 hover:text-brand-blue transition-all duration-500 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg rounded-lg sm:rounded-xl border-0 ring-2 ring-brand-blue/20 hover:ring-brand-gold/30"
+                  className="w-full h-12 sm:h-14 md:h-16 text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-brand-blue to-brand-blue/90 text-white hover:from-brand-gold hover:to-brand-gold/90 hover:text-brand-blue transition-all duration-500 transform hover:scale-[1.01] hover:shadow-2xl shadow-lg rounded-lg sm:rounded-xl border-0 ring-2 ring-brand-blue/20 hover:ring-brand-gold/30"
                 >
                   <span className="hidden sm:inline">Enroll Now — Limited Seats Left</span>
                   <span className="sm:hidden">Enroll Now</span>

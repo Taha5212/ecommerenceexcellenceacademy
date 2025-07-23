@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 
@@ -13,9 +14,14 @@ const navItems = [
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
+      // Only track sections on the home page
+      if (location.pathname !== '/') return;
+      
       const sections = navItems.map(item => item.href.substring(1));
       const scrollPosition = window.scrollY + 100;
 
@@ -35,12 +41,24 @@ export const Navigation = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
-  const scrollToSection = (href: string) => {
-    const element = document.getElementById(href.substring(1));
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const handleNavigation = (href: string) => {
+    if (location.pathname !== '/') {
+      // If not on home page, navigate to home first then scroll
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(href.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      // If on home page, just scroll
+      const element = document.getElementById(href.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     setIsOpen(false);
   };
@@ -52,8 +70,8 @@ export const Navigation = () => {
           {/* Logo */}
           <div className="flex-shrink-0 min-w-0 flex-1 md:flex-none">
             <button
-              onClick={() => scrollToSection('#hero')}
-              className="font-montserrat font-bold text-sm sm:text-base md:text-xl text-white tracking-tight truncate hover:text-brand-gold transition-colors duration-300 cursor-pointer"
+              onClick={() => handleNavigation('#hero')}
+              className="font-montserrat font-bold text-sm sm:text-base md:text-xl text-white tracking-tight truncate hover:text-brand-gold transition-all duration-300 cursor-pointer"
             >
               <span className="hidden sm:inline">E-Commerce Excellence</span>
               <span className="sm:hidden">E-Commerce</span>
@@ -66,8 +84,8 @@ export const Navigation = () => {
               {navItems.map((item) => (
                 <button
                   key={item.name}
-                  onClick={() => scrollToSection(item.href)}
-                  className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg group ${
+                  onClick={() => handleNavigation(item.href)}
+                  className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg group hover:scale-105 ${
                     activeSection === item.href.substring(1)
                       ? 'text-brand-gold bg-white/15 shadow-sm'
                       : 'text-white/90 hover:text-brand-gold hover:bg-white/10'
@@ -106,8 +124,8 @@ export const Navigation = () => {
             {navItems.map((item, index) => (
               <button
                 key={item.name}
-                onClick={() => scrollToSection(item.href)}
-                className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform ${
+                onClick={() => handleNavigation(item.href)}
+                className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 ${
                   isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
                 } ${
                   activeSection === item.href.substring(1)

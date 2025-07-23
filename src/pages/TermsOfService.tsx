@@ -5,8 +5,8 @@ const TermsOfService = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <div className="container mx-auto px-4 py-16 max-w-4xl">
-        <h1 className="font-montserrat font-bold text-4xl mb-8 text-primary">Terms of Service</h1>
+      <div className="container mx-auto px-4 sm:px-6 py-20 sm:py-24 max-w-4xl">
+        <h1 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl mb-6 sm:mb-8 text-primary">Terms of Service</h1>
         
         <div className="prose prose-lg max-w-none text-foreground space-y-6">
           <p className="text-muted-foreground mb-8">
