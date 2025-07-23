@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
   { name: 'Home', href: '#hero' },
@@ -16,6 +19,26 @@ export const Navigation = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, loading, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Logout Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Logged Out",
+        description: "You've been successfully logged out.",
+      });
+      navigate('/');
+    }
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -99,20 +122,45 @@ export const Navigation = () => {
               ))}
             </div>
             
-            {/* Auth Links */}
+            {/* Auth Section */}
             <div className="flex items-center space-x-2 ml-4 border-l border-white/20 pl-4">
-              <button
-                onClick={() => navigate('/auth?tab=login')}
-                className="px-4 py-2 text-sm font-medium text-white/90 hover:text-brand-gold transition-all duration-300 rounded-lg hover:bg-white/10 hover:scale-105"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => navigate('/auth?tab=signup')}
-                className="px-4 py-2 text-sm font-medium bg-brand-gold text-primary hover:bg-brand-gold/90 transition-all duration-300 rounded-lg hover:scale-105 shadow-lg"
-              >
-                Signup
-              </button>
+              {loading ? (
+                <div className="px-4 py-2 text-sm text-white/50">Loading...</div>
+              ) : user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white/90 hover:text-brand-gold transition-all duration-300 rounded-lg hover:bg-white/10">
+                      <User className="h-4 w-4" />
+                      <span className="max-w-32 truncate">{user.email}</span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg">
+                    <DropdownMenuItem onClick={() => navigate('/analytics')} className="cursor-pointer">
+                      <User className="h-4 w-4 mr-2" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <button
+                    onClick={() => navigate('/auth?tab=login')}
+                    className="px-4 py-2 text-sm font-medium text-white/90 hover:text-brand-gold transition-all duration-300 rounded-lg hover:bg-white/10 hover:scale-105"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => navigate('/auth?tab=signup')}
+                    className="px-4 py-2 text-sm font-medium bg-brand-gold text-primary hover:bg-brand-gold/90 transition-all duration-300 rounded-lg hover:scale-105 shadow-lg"
+                  >
+                    Signup
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -157,36 +205,79 @@ export const Navigation = () => {
               </button>
             ))}
             
-            {/* Mobile Auth Links */}
+            {/* Mobile Auth Section */}
             <div className="border-t border-white/20 pt-3 mt-3 space-y-2">
-              <button
-                onClick={() => {
-                  navigate('/auth?tab=login');
-                  setIsOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-white/90 hover:text-brand-gold hover:bg-white/10 ${
-                  isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
-                }`}
-                style={{
-                  transitionDelay: isOpen ? `${(navItems.length) * 50}ms` : '0ms'
-                }}
-              >
-                Login
-              </button>
-              <button
-                onClick={() => {
-                  navigate('/auth?tab=signup');
-                  setIsOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 bg-brand-gold text-primary hover:bg-brand-gold/90 shadow-lg ${
-                  isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
-                }`}
-                style={{
-                  transitionDelay: isOpen ? `${(navItems.length + 1) * 50}ms` : '0ms'
-                }}
-              >
-                Signup
-              </button>
+              {loading ? (
+                <div className="px-4 py-3 text-sm text-white/50">Loading...</div>
+              ) : user ? (
+                <>
+                  <div className={`px-4 py-3 text-sm font-medium text-white/90 border border-white/20 rounded-lg flex items-center space-x-2 ${
+                    isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                  }`}
+                  style={{
+                    transitionDelay: isOpen ? `${navItems.length * 50}ms` : '0ms'
+                  }}>
+                    <User className="h-4 w-4" />
+                    <span className="truncate">{user.email}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigate('/analytics');
+                      setIsOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-white/90 hover:text-brand-gold hover:bg-white/10 ${
+                      isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: isOpen ? `${(navItems.length + 1) * 50}ms` : '0ms'
+                    }}
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-red-400 hover:text-red-300 hover:bg-white/10 ${
+                      isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: isOpen ? `${(navItems.length + 2) * 50}ms` : '0ms'
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate('/auth?tab=login');
+                      setIsOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-white/90 hover:text-brand-gold hover:bg-white/10 ${
+                      isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: isOpen ? `${(navItems.length) * 50}ms` : '0ms'
+                    }}
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate('/auth?tab=signup');
+                      setIsOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 bg-brand-gold text-primary hover:bg-brand-gold/90 shadow-lg ${
+                      isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: isOpen ? `${(navItems.length + 1) * 50}ms` : '0ms'
+                    }}
+                  >
+                    Signup
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

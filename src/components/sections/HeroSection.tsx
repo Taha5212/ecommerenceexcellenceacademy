@@ -69,6 +69,10 @@ export const HeroSection = () => {
         }
       }
       
+      // Get current user if logged in
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || null;
+      
       // Submit to Supabase
       const { error } = await supabase
         .from('form_submissions')
@@ -76,7 +80,8 @@ export const HeroSection = () => {
           name: formData.fullName.trim(),
           email: formData.email.trim(),
           phone: formData.phone.trim() || null,
-          message: formData.message.trim() || null
+          message: formData.message.trim() || null,
+          user_id: userId
         });
 
       if (error) {

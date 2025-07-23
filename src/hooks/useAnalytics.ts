@@ -27,8 +27,8 @@ const getDeviceType = (): 'desktop' | 'tablet' | 'mobile' => {
 
 // Get current user ID if authenticated
 const getCurrentUserId = async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user?.id || null;
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.user?.id || null;
 };
 
 export const useAnalytics = () => {
