@@ -7,6 +7,7 @@ import { ImpactSection } from './sections/ImpactSection';
 import { AchievementsSection } from './sections/AchievementsSection';
 import { FAQSection } from './sections/FAQSection';
 import { InstructorSection } from './sections/InstructorSection';
+import { CTASection } from './sections/CTASection';
 import { FinalCTASection } from './sections/FinalCTASection';
 import { Footer } from './sections/Footer';
 
@@ -28,6 +29,7 @@ export const LandingPage = () => {
       <div id="instructor">
         <InstructorSection />
       </div>
+      <CTASection />
       <FinalCTASection />
       <div id="footer">
         <Footer />

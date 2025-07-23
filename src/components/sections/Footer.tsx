@@ -22,7 +22,14 @@ export const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-accent flex-shrink-0" />
-                <span className="text-white/80">C-2, Block D, North Nazimabad, Karachi</span>
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=C-2,+Block+D,+North+Nazimabad,+Karachi" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/80 hover:text-accent hover:underline transition-all duration-300 cursor-pointer"
+                >
+                  C-2, Block D, North Nazimabad, Karachi
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-accent flex-shrink-0" />
