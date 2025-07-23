@@ -66,30 +66,37 @@ export const Navigation = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-nav backdrop-blur-md shadow-elegant border-b border-white/10">
       <div className="container mx-auto px-3 sm:px-4 md:px-6">
-        <div className="flex items-center justify-between h-14 sm:h-16">
+        <div className="flex items-center justify-between h-16 sm:h-18 md:h-20">
           {/* Logo */}
-          <div className="flex-shrink-0 min-w-0 flex-1 md:flex-none pr-2 md:pr-0">
+          <div className="flex-shrink-0 flex-1 md:flex-none pr-4 md:pr-0">
             <button
               onClick={() => handleNavigation('#hero')}
-              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left w-full"
+              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left"
             >
-              {/* Ultra small mobile (320px-374px): Smallest font */}
-              <div className="block xs:hidden text-[10px] leading-tight whitespace-nowrap overflow-hidden">
+              {/* Mobile small (320px-374px): Two lines, smaller font */}
+              <div className="block xs:hidden text-[11px] leading-[1.2] max-w-[180px]">
+                <div>E-Commerce Excellence</div>
+                <div>Academy</div>
+              </div>
+              
+              {/* Mobile medium (375px-639px): Two lines, slightly larger */}
+              <div className="hidden xs:block sm:hidden text-xs leading-[1.3] max-w-[200px]">
+                <div>E-Commerce Excellence</div>
+                <div>Academy</div>
+              </div>
+              
+              {/* Tablet (640px-767px): One line, reduced font */}
+              <div className="hidden sm:block md:hidden text-sm leading-tight">
                 E-Commerce Excellence Academy
               </div>
               
-              {/* Small mobile (375px-413px): Small font */}
-              <div className="hidden xs:block sm:hidden text-xs leading-tight whitespace-nowrap overflow-hidden">
+              {/* Desktop small (768px-1023px): One line, good size */}
+              <div className="hidden md:block lg:hidden text-base leading-tight">
                 E-Commerce Excellence Academy
               </div>
               
-              {/* Medium mobile/tablet (414px-767px): Medium small font */}
-              <div className="hidden sm:block md:hidden text-sm leading-tight whitespace-nowrap overflow-hidden">
-                E-Commerce Excellence Academy
-              </div>
-              
-              {/* Desktop (768px+): Full size */}
-              <div className="hidden md:block text-base lg:text-xl leading-tight whitespace-nowrap">
+              {/* Desktop large (1024px+): One line, full size */}
+              <div className="hidden lg:block text-xl leading-tight">
                 E-Commerce Excellence Academy
               </div>
             </button>
