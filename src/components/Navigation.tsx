@@ -92,12 +92,12 @@ export const Navigation = () => {
               
               {/* Desktop small (768px-1023px): One line, good size */}
               <div className="hidden md:block lg:hidden text-base leading-tight">
-                E Commerce Excellence Academy
+                Academy
               </div>
               
               {/* Desktop large (1024px+): One line, full size */}
               <div className="hidden lg:block text-xl leading-tight">
-                E Commerce Excellence Academy
+                Academy
               </div>
             </button>
           </div>
