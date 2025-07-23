@@ -41,6 +41,33 @@ export type Database = {
         }
         Relationships: []
       }
+      form_submissions: {
+        Row: {
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          submitted_at: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          submitted_at?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          submitted_at?: string
+        }
+        Relationships: []
+      }
       user_analytics: {
         Row: {
           created_at: string

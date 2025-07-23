@@ -17,6 +17,7 @@ interface AnalyticsData {
   avgSessionDuration: number;
   signupsToday: number;
   loginsToday: number;
+  formSubmissions: number;
 }
 
 interface ChartData {
@@ -46,7 +47,8 @@ export const Analytics = () => {
     activeUsers: 0,
     avgSessionDuration: 0,
     signupsToday: 0,
-    loginsToday: 0
+    loginsToday: 0,
+    formSubmissions: 0
   });
 
   const [timeRange, setTimeRange] = useState('7d');
@@ -67,13 +69,15 @@ export const Analytics = () => {
         { count: totalClicks },
         { count: totalSessions },
         { count: signupsToday },
-        { count: loginsToday }
+        { count: loginsToday },
+        { count: formSubmissions }
       ] = await Promise.all([
         supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'pageview').gte('created_at', timeFilter),
         supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'click').gte('created_at', timeFilter),
         supabase.from('user_analytics').select('session_id', { count: 'exact', head: true }).gte('created_at', timeFilter),
         supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'signup').gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
-        supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'login').gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+        supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'login').gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
+        supabase.from('form_submissions').select('*', { count: 'exact', head: true }).gte('submitted_at', timeFilter)
       ]);
 
       // Fetch active users (sessions active in last 30 minutes)
@@ -112,7 +116,8 @@ export const Analytics = () => {
         activeUsers: activeUsers || 0,
         avgSessionDuration: Math.round(avgSessionDuration / 1000), // Convert to seconds
         signupsToday: signupsToday || 0,
-        loginsToday: loginsToday || 0
+        loginsToday: loginsToday || 0,
+        formSubmissions: formSubmissions || 0
       });
 
       // Fetch chart data
@@ -280,7 +285,7 @@ export const Analytics = () => {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -302,6 +307,17 @@ export const Analytics = () => {
           <CardContent>
             <div className="text-2xl font-bold">{data.activeUsers}</div>
             <p className="text-xs text-muted-foreground">Currently online</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Form Submissions</CardTitle>
+            <MousePointer className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{data.formSubmissions}</div>
+            <p className="text-xs text-muted-foreground">Enrollment requests</p>
           </CardContent>
         </Card>
 

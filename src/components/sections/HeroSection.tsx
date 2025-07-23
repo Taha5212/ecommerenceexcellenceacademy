@@ -1,82 +1,119 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { supabase } from '@/integrations/supabase/client';
 export const HeroSection = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
-    email: ''
+    email: '',
+    message: ''
   });
-  const {
-    toast
-  } = useToast();
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+  const { trackClick } = useAnalytics();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Enhanced validation
-    if (!formData.fullName.trim()) {
+    // Track form submission click
+    trackClick('enrollment-form-submit', 'Enroll Now', 'button');
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Enhanced validation
+      if (!formData.fullName.trim()) {
+        toast({
+          title: "Full Name Required",
+          description: "Please enter your full name",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (!formData.email.trim()) {
+        toast({
+          title: "Email Required",
+          description: "Please enter your email address", 
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        toast({
+          title: "Invalid Email Format",
+          description: "Please enter a valid email address",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Phone validation (optional but must be valid if provided)
+      if (formData.phone.trim()) {
+        const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+        if (!phoneRegex.test(formData.phone)) {
+          toast({
+            title: "Invalid Phone Number",
+            description: "Please enter a valid phone number",
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+      
+      // Submit to Supabase
+      const { error } = await supabase
+        .from('form_submissions')
+        .insert({
+          name: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || null,
+          message: formData.message.trim() || null
+        });
+
+      if (error) {
+        console.error('Form submission error:', error);
+        toast({
+          title: "Submission Failed",
+          description: "There was an error submitting your form. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Success
       toast({
-        title: "Full Name Required",
-        description: "Please enter your full name",
+        title: "Enrollment Request Submitted!",
+        description: "We'll contact you soon with next steps.",
+        variant: "default"
+      });
+      
+      // Reset form
+      setFormData({
+        fullName: '',
+        phone: '',
+        email: '',
+        message: ''
+      });
+      
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast({
+        title: "Submission Failed",
+        description: "There was an unexpected error. Please try again.",
         variant: "destructive"
       });
-      return;
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    if (!formData.phone.trim()) {
-      toast({
-        title: "Phone Number Required", 
-        description: "Please enter your phone number",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!formData.email.trim()) {
-      toast({
-        title: "Email Required",
-        description: "Please enter your email address", 
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast({
-        title: "Invalid Email Format",
-        description: "Please enter a valid email address",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // Phone validation (basic)
-    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid phone number",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    toast({
-      title: "Enrollment Request Submitted!",
-      description: "We'll contact you soon with next steps.",
-      variant: "default"
-    });
-    
-    setFormData({
-      fullName: '',
-      phone: '',
-      email: ''
-    });
   };
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -176,15 +213,16 @@ export const HeroSection = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="phone" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">
+                      Phone Number <span className="text-muted-foreground font-normal">(optional)</span>
+                    </Label>
                     <Input 
                       id="phone" 
                       type="tel" 
-                      placeholder="Enter your phone number" 
+                      placeholder="Enter your phone number (optional)" 
                       value={formData.phone} 
                       onChange={e => handleInputChange('phone', e.target.value)} 
                       className="h-12 sm:h-14 border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg" 
-                      required 
                     />
                   </div>
 
@@ -200,14 +238,39 @@ export const HeroSection = () => {
                       required 
                     />
                   </div>
+
+                  <div>
+                    <Label htmlFor="message" className="text-xs sm:text-sm font-semibold text-brand-blue/80 mb-2 sm:mb-3 block">
+                      Message <span className="text-muted-foreground font-normal">(optional)</span>
+                    </Label>
+                    <Textarea 
+                      id="message" 
+                      placeholder="Tell us about your goals and expectations (optional)" 
+                      value={formData.message} 
+                      onChange={e => handleInputChange('message', e.target.value)} 
+                      className="min-h-[100px] border-2 border-brand-blue/15 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 transition-all duration-300 rounded-lg sm:rounded-xl bg-white/95 text-base sm:text-lg font-medium placeholder:text-muted-foreground/60 shadow-sm hover:shadow-md focus:shadow-lg resize-y" 
+                      rows={4}
+                    />
+                  </div>
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 sm:h-14 md:h-16 text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-brand-blue to-brand-blue/90 text-white hover:from-brand-gold hover:to-brand-gold/90 hover:text-brand-blue transition-all duration-500 transform hover:scale-[1.01] hover:shadow-2xl shadow-lg rounded-lg sm:rounded-xl border-0 ring-2 ring-brand-blue/20 hover:ring-brand-gold/30"
+                  disabled={isSubmitting}
+                  className="w-full h-12 sm:h-14 md:h-16 text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-brand-blue to-brand-blue/90 text-white hover:from-brand-gold hover:to-brand-gold/90 hover:text-brand-blue transition-all duration-500 transform hover:scale-[1.01] hover:shadow-2xl shadow-lg rounded-lg sm:rounded-xl border-0 ring-2 ring-brand-blue/20 hover:ring-brand-gold/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  <span className="hidden sm:inline">Enroll Now — Limited Seats Left</span>
-                  <span className="sm:hidden">Enroll Now</span>
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      <span className="hidden sm:inline">Submitting...</span>
+                      <span className="sm:hidden">Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="hidden sm:inline">Enroll Now — Limited Seats Left</span>
+                      <span className="sm:hidden">Enroll Now</span>
+                    </>
+                  )}
                 </Button>
 
                 <p className="text-center text-brand-gold font-bold text-base sm:text-lg mt-4 sm:mt-6 bg-gradient-to-r from-brand-gold to-brand-gold/80 bg-clip-text text-transparent">
