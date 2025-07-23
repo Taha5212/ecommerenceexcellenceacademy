@@ -71,32 +71,9 @@ export const Navigation = () => {
           <div className="flex-shrink-0 flex-1 md:flex-none pr-4 md:pr-0">
             <button
               onClick={() => handleNavigation('#hero')}
-              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left"
+              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg"
             >
-              {/* Mobile small (320px-374px): Smaller font to fit */}
-              <div className="block xs:hidden text-[10px] leading-tight max-w-[160px] whitespace-nowrap overflow-hidden">
-                E Commerce Excellence Academy
-              </div>
-              
-              {/* Mobile medium (375px-639px): Slightly larger font */}
-              <div className="hidden xs:block sm:hidden text-[11px] leading-tight max-w-[180px] whitespace-nowrap overflow-hidden">
-                E Commerce Excellence Academy
-              </div>
-              
-              {/* Tablet (640px-767px): Medium font for single line */}
-              <div className="hidden sm:block md:hidden text-xs leading-tight whitespace-nowrap">
-                E Commerce Excellence Academy
-              </div>
-              
-              {/* Desktop small (768px-1199px): Good readable size */}
-              <div className="hidden md:block lg:hidden text-sm leading-tight whitespace-nowrap">
-                E Commerce Excellence Academy
-              </div>
-              
-              {/* Desktop large (≥1200px): Full size for large screens */}
-              <div className="hidden lg:block text-base xl:text-lg leading-tight whitespace-nowrap">
-                E Commerce Excellence Academy
-              </div>
+              E Commerce Excellence Academy
             </button>
           </div>
 
