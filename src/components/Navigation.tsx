@@ -68,32 +68,31 @@ export const Navigation = () => {
       <div className="container mx-auto px-3 sm:px-4 md:px-6">
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <div className="flex-shrink-0 min-w-0 flex-1 md:flex-none">
+          <div className="flex-shrink-0 min-w-0 max-w-[60%] sm:max-w-none md:flex-none">
             <button
               onClick={() => handleNavigation('#hero')}
-              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group"
+              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left"
             >
-              {/* Mobile: Smaller text with line break */}
-              <div className="block xs:hidden text-xs leading-tight">
-                <div>E-Commerce</div>
-                <div>Excellence</div>
+              {/* Very small mobile: Just "E-Commerce Excellence" in smaller font */}
+              <div className="block sm:hidden text-xs leading-[1.1] max-w-full">
+                E-Commerce Excellence
               </div>
               
-              {/* Small screens: Abbreviated version */}
-              <div className="hidden xs:block sm:hidden text-sm">
-                Excellence Academy
+              {/* Tablet and small desktop: Medium size */}
+              <div className="hidden sm:block lg:hidden text-sm leading-tight">
+                E-Commerce Excellence Academy
               </div>
               
-              {/* Medium+ screens: Full name */}
-              <div className="hidden sm:block text-base md:text-xl">
+              {/* Large desktop: Full size */}
+              <div className="hidden lg:block text-xl leading-tight">
                 E-Commerce Excellence Academy
               </div>
             </button>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-1">
+          <div className="hidden md:block flex-shrink-0">
+            <div className="ml-4 lg:ml-10 flex items-center space-x-1">
               {navItems.map((item) => (
                 <button
                   key={item.name}
