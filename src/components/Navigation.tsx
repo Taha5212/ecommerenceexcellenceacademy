@@ -73,31 +73,29 @@ export const Navigation = () => {
               onClick={() => handleNavigation('#hero')}
               className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left"
             >
-              {/* Mobile small (320px-374px): Two lines, smaller font */}
-              <div className="block xs:hidden text-[11px] leading-[1.2] max-w-[180px]">
-                <div>E Commerce Excellence</div>
-                <div>Academy</div>
-              </div>
-              
-              {/* Mobile medium (375px-639px): Two lines, slightly larger */}
-              <div className="hidden xs:block sm:hidden text-xs leading-[1.3] max-w-[200px]">
-                <div>E Commerce Excellence</div>
-                <div>Academy</div>
-              </div>
-              
-              {/* Tablet (640px-767px): One line, reduced font */}
-              <div className="hidden sm:block md:hidden text-sm leading-tight">
+              {/* Mobile small (320px-374px): Smaller font to fit */}
+              <div className="block xs:hidden text-[10px] leading-tight max-w-[160px] whitespace-nowrap overflow-hidden">
                 E Commerce Excellence Academy
               </div>
               
-              {/* Desktop small (768px-1023px): One line, good size */}
-              <div className="hidden md:block lg:hidden text-base leading-tight">
-                Academy
+              {/* Mobile medium (375px-639px): Slightly larger font */}
+              <div className="hidden xs:block sm:hidden text-[11px] leading-tight max-w-[180px] whitespace-nowrap overflow-hidden">
+                E Commerce Excellence Academy
               </div>
               
-              {/* Desktop large (1024px+): One line, full size */}
-              <div className="hidden lg:block text-xl leading-tight">
-                Academy
+              {/* Tablet (640px-767px): Medium font for single line */}
+              <div className="hidden sm:block md:hidden text-xs leading-tight whitespace-nowrap">
+                E Commerce Excellence Academy
+              </div>
+              
+              {/* Desktop small (768px-1199px): Good readable size */}
+              <div className="hidden md:block lg:hidden text-sm leading-tight whitespace-nowrap">
+                E Commerce Excellence Academy
+              </div>
+              
+              {/* Desktop large (≥1200px): Full size for large screens */}
+              <div className="hidden lg:block text-base xl:text-lg leading-tight whitespace-nowrap">
+                E Commerce Excellence Academy
               </div>
             </button>
           </div>
