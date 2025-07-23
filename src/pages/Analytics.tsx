@@ -3,129 +3,116 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, MousePointer, Clock, Smartphone, Monitor } from 'lucide-react';
+import { Calendar, Users, Monitor, Clock, Smartphone, Tablet, Globe, Filter, RefreshCw, ExternalLink, Hash } from 'lucide-react';
+import { format } from 'date-fns';
 
-interface AnalyticsData {
-  totalUsers: number;
+interface SessionData {
   totalSessions: number;
-  totalPageViews: number;
-  totalClicks: number;
-  activeUsers: number;
-  avgSessionDuration: number;
-  signupsToday: number;
-  loginsToday: number;
-  formSubmissions: number;
+  uniqueUsers: number;
+  mostActivePage: string;
+  mostActivePageViews: number;
+  activeSessions: number;
 }
 
 interface ChartData {
   name: string;
   value: number;
   date?: string;
-  signups?: number;
-  logins?: number;
+  sessions?: number;
+}
+
+interface ActiveSession {
+  session_id: string;
+  user_id: string | null;
+  last_activity: string;
+  device_type: string;
+  page_url: string | null;
+  created_at: string;
 }
 
 const chartConfig = {
-  pageviews: { label: "Page Views", color: "hsl(var(--primary))" },
-  clicks: { label: "Clicks", color: "hsl(var(--secondary))" },
-  signups: { label: "Signups", color: "hsl(var(--accent))" },
-  logins: { label: "Logins", color: "hsl(var(--muted))" },
+  sessions: { label: "Sessions", color: "hsl(var(--primary))" },
   desktop: { label: "Desktop", color: "hsl(var(--primary))" },
   tablet: { label: "Tablet", color: "hsl(var(--secondary))" },
   mobile: { label: "Mobile", color: "hsl(var(--accent))" }
 };
 
+const DEVICE_ICONS = {
+  desktop: Monitor,
+  tablet: Tablet,
+  mobile: Smartphone
+};
+
 export const Analytics = () => {
-  const [data, setData] = useState<AnalyticsData>({
-    totalUsers: 0,
+  const [data, setData] = useState<SessionData>({
     totalSessions: 0,
-    totalPageViews: 0,
-    totalClicks: 0,
-    activeUsers: 0,
-    avgSessionDuration: 0,
-    signupsToday: 0,
-    loginsToday: 0,
-    formSubmissions: 0
+    uniqueUsers: 0,
+    mostActivePage: '',
+    mostActivePageViews: 0,
+    activeSessions: 0
   });
 
   const [timeRange, setTimeRange] = useState('7d');
+  const [deviceFilter, setDeviceFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [signupTrends, setSignupTrends] = useState<ChartData[]>([]);
-  const [popularPages, setPopularPages] = useState<ChartData[]>([]);
+  const [sessionsOverTime, setSessionsOverTime] = useState<ChartData[]>([]);
   const [deviceBreakdown, setDeviceBreakdown] = useState<ChartData[]>([]);
-  const [clickData, setClickData] = useState<ChartData[]>([]);
+  const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
+  const [filteredSessions, setFilteredSessions] = useState<ActiveSession[]>([]);
 
   const fetchAnalyticsData = async () => {
     setLoading(true);
     try {
       const timeFilter = getTimeFilter(timeRange);
       
-      // Fetch basic metrics
-      const [
-        { count: totalPageViews },
-        { count: totalClicks },
-        { count: totalSessions },
-        { count: signupsToday },
-        { count: loginsToday },
-        { count: formSubmissions }
-      ] = await Promise.all([
-        supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'pageview').gte('created_at', timeFilter),
-        supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'click').gte('created_at', timeFilter),
-        supabase.from('user_analytics').select('session_id', { count: 'exact', head: true }).gte('created_at', timeFilter),
-        supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'signup').gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
-        supabase.from('user_analytics').select('*', { count: 'exact', head: true }).eq('event_type', 'login').gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
-        supabase.from('form_submissions').select('*', { count: 'exact', head: true }).gte('submitted_at', timeFilter)
-      ]);
-
-      // Fetch active users (sessions active in last 30 minutes)
-      const { count: activeUsers } = await supabase
+      // Fetch all active sessions data
+      const { data: sessionData, error } = await supabase
         .from('active_sessions')
-        .select('*', { count: 'exact', head: true })
-        .gte('last_activity', new Date(Date.now() - 30 * 60 * 1000).toISOString());
-
-      // Fetch unique users count
-      const { data: uniqueUsers } = await supabase
-        .from('user_analytics')
-        .select('user_id')
+        .select('*')
         .gte('created_at', timeFilter)
-        .not('user_id', 'is', null);
+        .order('last_activity', { ascending: false });
 
-      const totalUsers = new Set(uniqueUsers?.map(u => u.user_id)).size;
+      if (error) throw error;
 
-      // Fetch session durations for average
-      const { data: sessionEnds } = await supabase
-        .from('user_analytics')
-        .select('event_details')
-        .eq('event_type', 'session_end')
-        .gte('created_at', timeFilter);
+      setActiveSessions(sessionData || []);
 
-      const durations = sessionEnds?.map(s => {
-        const details = s.event_details as any;
-        return details?.session_duration_ms || 0;
-      }) || [];
-      const avgSessionDuration = durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : 0;
+      // Calculate summary metrics
+      const totalSessions = sessionData?.length || 0;
+      const uniqueUsers = new Set(sessionData?.filter(s => s.user_id).map(s => s.user_id)).size;
+      
+      // Find most active page
+      const pageCounts = sessionData?.reduce((acc: Record<string, number>, session) => {
+        const page = session.page_url || '/';
+        acc[page] = (acc[page] || 0) + 1;
+        return acc;
+      }, {}) || {};
+
+      const mostActivePageEntry = Object.entries(pageCounts).sort(([,a], [,b]) => b - a)[0];
+      const mostActivePage = mostActivePageEntry?.[0] || '';
+      const mostActivePageViews = mostActivePageEntry?.[1] || 0;
+
+      // Count currently active sessions (last 30 minutes)
+      const activeThreshold = new Date(Date.now() - 30 * 60 * 1000);
+      const activeSessions = sessionData?.filter(s => new Date(s.last_activity) > activeThreshold).length || 0;
 
       setData({
-        totalUsers,
-        totalSessions: totalSessions || 0,
-        totalPageViews: totalPageViews || 0,
-        totalClicks: totalClicks || 0,
-        activeUsers: activeUsers || 0,
-        avgSessionDuration: Math.round(avgSessionDuration / 1000), // Convert to seconds
-        signupsToday: signupsToday || 0,
-        loginsToday: loginsToday || 0,
-        formSubmissions: formSubmissions || 0
+        totalSessions,
+        uniqueUsers,
+        mostActivePage,
+        mostActivePageViews,
+        activeSessions
       });
 
       // Fetch chart data
       await Promise.all([
-        fetchSignupTrends(timeFilter),
-        fetchPopularPages(timeFilter),
-        fetchDeviceBreakdown(timeFilter),
-        fetchClickData(timeFilter)
+        fetchSessionsOverTime(timeFilter),
+        fetchDeviceBreakdown(sessionData || [])
       ]);
 
     } catch (error) {
@@ -146,97 +133,57 @@ export const Analytics = () => {
     }
   };
 
-  const fetchSignupTrends = async (timeFilter: string) => {
+  const fetchSessionsOverTime = async (timeFilter: string) => {
     const { data } = await supabase
-      .from('user_analytics')
-      .select('created_at, event_type')
-      .in('event_type', ['signup', 'login'])
+      .from('active_sessions')
+      .select('created_at')
       .gte('created_at', timeFilter)
       .order('created_at');
 
     if (data) {
-      const trends = data.reduce((acc: Record<string, { signups: number; logins: number }>, item) => {
-        const date = new Date(item.created_at).toLocaleDateString();
-        if (!acc[date]) acc[date] = { signups: 0, logins: 0 };
-        if (item.event_type === 'signup') acc[date].signups++;
-        if (item.event_type === 'login') acc[date].logins++;
+      const sessionsByDate = data.reduce((acc: Record<string, number>, session) => {
+        const date = format(new Date(session.created_at), 'MMM dd');
+        acc[date] = (acc[date] || 0) + 1;
         return acc;
       }, {});
 
-      const chartData = Object.entries(trends).map(([date, values]) => ({
-        name: date,
-        value: values.signups + values.logins, // Required for ChartData interface
-        signups: values.signups,
-        logins: values.logins
+      const chartData = Object.entries(sessionsByDate).map(([name, sessions]) => ({
+        name,
+        value: sessions,
+        sessions
       }));
 
-      setSignupTrends(chartData);
+      setSessionsOverTime(chartData);
     }
   };
 
-  const fetchPopularPages = async (timeFilter: string) => {
-    const { data } = await supabase
-      .from('user_analytics')
-      .select('page_url')
-      .eq('event_type', 'pageview')
-      .gte('created_at', timeFilter);
+  const fetchDeviceBreakdown = async (sessionData: ActiveSession[]) => {
+    const deviceCount = sessionData.reduce((acc: Record<string, number>, session) => {
+      acc[session.device_type] = (acc[session.device_type] || 0) + 1;
+      return acc;
+    }, {});
 
-    if (data) {
-      const pageCount = data.reduce((acc: Record<string, number>, item) => {
-        const page = item.page_url || 'Unknown';
-        acc[page] = (acc[page] || 0) + 1;
-        return acc;
-      }, {});
-
-      const chartData = Object.entries(pageCount)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 10)
-        .map(([name, value]) => ({ name, value }));
-
-      setPopularPages(chartData);
-    }
+    const chartData = Object.entries(deviceCount).map(([name, value]) => ({ name, value }));
+    setDeviceBreakdown(chartData);
   };
 
-  const fetchDeviceBreakdown = async (timeFilter: string) => {
-    const { data } = await supabase
-      .from('user_analytics')
-      .select('device_type')
-      .gte('created_at', timeFilter);
+  // Filter sessions based on device and search term
+  useEffect(() => {
+    let filtered = activeSessions;
 
-    if (data) {
-      const deviceCount = data.reduce((acc: Record<string, number>, item) => {
-        acc[item.device_type] = (acc[item.device_type] || 0) + 1;
-        return acc;
-      }, {});
-
-      const chartData = Object.entries(deviceCount).map(([name, value]) => ({ name, value }));
-      setDeviceBreakdown(chartData);
+    if (deviceFilter !== 'all') {
+      filtered = filtered.filter(session => session.device_type === deviceFilter);
     }
-  };
 
-  const fetchClickData = async (timeFilter: string) => {
-    const { data } = await supabase
-      .from('user_analytics')
-      .select('event_details')
-      .eq('event_type', 'click')
-      .gte('created_at', timeFilter);
-
-    if (data) {
-      const clickCount = data.reduce((acc: Record<string, number>, item) => {
-        const details = item.event_details as any;
-        const elementText = details?.element_text || 'Unknown';
-        acc[elementText] = (acc[elementText] || 0) + 1;
-        return acc;
-      }, {});
-
-      const chartData = Object.entries(clickCount)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 10)
-        .map(([name, value]) => ({ name, value }));
-
-      setClickData(chartData);
+    if (searchTerm) {
+      filtered = filtered.filter(session => 
+        session.session_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (session.page_url?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
+      );
     }
-  };
+
+    setFilteredSessions(filtered);
+  }, [activeSessions, deviceFilter, searchTerm]);
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -261,8 +208,10 @@ export const Analytics = () => {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Track user behavior and site performance</p>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Session Analytics
+          </h1>
+          <p className="text-muted-foreground">Real-time user session tracking and insights</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -278,112 +227,88 @@ export const Analytics = () => {
             </SelectContent>
           </Select>
           
-          <Button onClick={fetchAnalyticsData} variant="outline">
+          <Button onClick={fetchAnalyticsData} variant="outline" className="gap-2">
+            <RefreshCw className="h-4 w-4" />
             Refresh
           </Button>
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-l-4 border-l-primary">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
+            <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.totalUsers}</div>
-            <Badge variant="secondary" className="mt-2">
-              {data.signupsToday} signups today
-            </Badge>
+            <div className="text-2xl font-bold text-primary">{data.totalSessions}</div>
+            <p className="text-xs text-muted-foreground">All time sessions</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-secondary">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+            <CardTitle className="text-sm font-medium">Unique Users</CardTitle>
+            <Users className="h-4 w-4 text-secondary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-secondary">{data.uniqueUsers}</div>
+            <p className="text-xs text-muted-foreground">Registered users</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-accent">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Most Active Page</CardTitle>
+            <Globe className="h-4 w-4 text-accent" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-bold text-accent truncate">{data.mostActivePage || 'N/A'}</div>
+            <p className="text-xs text-muted-foreground">{data.mostActivePageViews} sessions</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-green-500">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Now</CardTitle>
             <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.activeUsers}</div>
-            <p className="text-xs text-muted-foreground">Currently online</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Form Submissions</CardTitle>
-            <MousePointer className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.formSubmissions}</div>
-            <p className="text-xs text-muted-foreground">Enrollment requests</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Page Views</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.totalPageViews}</div>
-            <p className="text-xs text-muted-foreground">{data.totalSessions} sessions</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Session</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{Math.floor(data.avgSessionDuration / 60)}m {data.avgSessionDuration % 60}s</div>
-            <p className="text-xs text-muted-foreground">{data.totalClicks} total clicks</p>
+            <div className="text-2xl font-bold text-green-600">{data.activeSessions}</div>
+            <p className="text-xs text-muted-foreground">Last 30 minutes</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Signup/Login Trends */}
+        {/* Sessions Over Time */}
         <Card>
           <CardHeader>
-            <CardTitle>Signup & Login Trends</CardTitle>
-            <CardDescription>Daily signups and logins over time</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary" />
+              Sessions Over Time
+            </CardTitle>
+            <CardDescription>Daily session creation trends</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={signupTrends}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
+                <LineChart data={sessionsOverTime}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted/20" />
+                  <XAxis dataKey="name" className="text-xs" />
+                  <YAxis className="text-xs" />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="signups" stroke="var(--color-signups)" strokeWidth={2} />
-                  <Line type="monotone" dataKey="logins" stroke="var(--color-logins)" strokeWidth={2} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sessions" 
+                    stroke="var(--color-sessions)" 
+                    strokeWidth={3}
+                    dot={{ fill: "var(--color-sessions)", strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                  />
                 </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        {/* Popular Pages */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Popular Pages</CardTitle>
-            <CardDescription>Most visited pages on your site</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={popularPages} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" width={80} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" fill="var(--color-pageviews)" />
-                </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
@@ -392,8 +317,11 @@ export const Analytics = () => {
         {/* Device Breakdown */}
         <Card>
           <CardHeader>
-            <CardTitle>Device Breakdown</CardTitle>
-            <CardDescription>Visitor distribution by device type</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Monitor className="h-5 w-5 text-primary" />
+              Device Breakdown
+            </CardTitle>
+            <CardDescription>Session distribution by device type</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-80">
@@ -404,15 +332,19 @@ export const Analytics = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
+                    innerRadius={40}
                     dataKey="value"
                     label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
-                    {deviceBreakdown.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={index === 0 ? 'var(--color-desktop)' : index === 1 ? 'var(--color-tablet)' : 'var(--color-mobile)'} 
-                      />
-                    ))}
+                    {deviceBreakdown.map((entry, index) => {
+                      const colors = ['var(--color-desktop)', 'var(--color-tablet)', 'var(--color-mobile)'];
+                      return (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={colors[index % colors.length]} 
+                        />
+                      );
+                    })}
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
@@ -420,28 +352,112 @@ export const Analytics = () => {
             </ChartContainer>
           </CardContent>
         </Card>
-
-        {/* Most Clicked Elements */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Most Clicked Elements</CardTitle>
-            <CardDescription>Top buttons and links clicked by users</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={clickData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" fill="var(--color-clicks)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
       </div>
+
+      {/* Sessions Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Hash className="h-5 w-5 text-primary" />
+            Active Sessions
+          </CardTitle>
+          <CardDescription>Real-time session activity and details</CardDescription>
+          
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Select value={deviceFilter} onValueChange={setDeviceFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Devices</SelectItem>
+                  <SelectItem value="desktop">Desktop</SelectItem>
+                  <SelectItem value="tablet">Tablet</SelectItem>
+                  <SelectItem value="mobile">Mobile</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <Input
+              placeholder="Search sessions or pages..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-xs"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-lg border">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-semibold">Session ID</TableHead>
+                  <TableHead className="font-semibold">Device</TableHead>
+                  <TableHead className="font-semibold">Page URL</TableHead>
+                  <TableHead className="font-semibold">Last Activity</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredSessions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      No sessions found matching your criteria
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredSessions.slice(0, 50).map((session) => {
+                    const DeviceIcon = DEVICE_ICONS[session.device_type as keyof typeof DEVICE_ICONS] || Monitor;
+                    const isActive = new Date(session.last_activity) > new Date(Date.now() - 30 * 60 * 1000);
+                    
+                    return (
+                      <TableRow key={session.session_id} className="hover:bg-muted/20">
+                        <TableCell className="font-mono text-sm">
+                          <div className="flex items-center gap-2">
+                            <Hash className="h-3 w-3 text-muted-foreground" />
+                            {session.session_id.slice(0, 8)}...
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <DeviceIcon className="h-4 w-4 text-muted-foreground" />
+                            <span className="capitalize">{session.device_type}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2 max-w-xs">
+                            <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                            <span className="truncate">{session.page_url || '/'}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {format(new Date(session.last_activity), 'MMM dd, HH:mm')}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={isActive ? "default" : "secondary"} className="gap-1">
+                            <div className={`h-1.5 w-1.5 rounded-full ${isActive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+                            {isActive ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          
+          {filteredSessions.length > 50 && (
+            <div className="flex justify-center mt-4">
+              <p className="text-sm text-muted-foreground">
+                Showing first 50 of {filteredSessions.length} sessions
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
