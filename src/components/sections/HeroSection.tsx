@@ -82,6 +82,7 @@ export const HeroSection = () => {
 
       // Check if any validation failed
       if (!nameValidation.isValid || !phoneValidation.isValid || !emailValidation.isValid) {
+        setIsSubmitting(false); // Important: Clear loading state on validation failure
         toast({
           title: "Form Validation Failed",
           description: "Please fix the errors and try again",
@@ -90,31 +91,41 @@ export const HeroSection = () => {
         return;
       }
 
-      // Prepare submission data - optimize by avoiding session check
+      // Get current user session for user_id
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || null;
+
+      // Prepare submission data
       const submissionData = {
         name: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         message: formData.message.trim() || null,
-        user_id: null // Will be set by RLS if user is authenticated
+        user_id: userId
       };
 
-      // Single optimized database call
-      const { error } = await supabase
+      console.log('Submitting form data:', submissionData); // Debug log
+
+      // Submit to Supabase
+      const { data, error } = await supabase
         .from('form_submissions')
-        .insert(submissionData);
+        .insert(submissionData)
+        .select(); // Add select to get the inserted data
 
       if (error) {
         console.error('Form submission error:', error);
+        setIsSubmitting(false); // Clear loading state on error
         toast({
           title: "Submission Failed",
-          description: "Unable to submit form. Please try again.",
+          description: `Error: ${error.message}. Please try again.`,
           variant: "destructive"
         });
         return;
       }
+
+      console.log('Form submitted successfully:', data); // Debug log
       
-      // Immediate success feedback
+      // Success feedback
       toast({
         title: "✅ Enrollment Request Submitted!",
         description: "We'll contact you within 24 hours with next steps.",
@@ -136,12 +147,14 @@ export const HeroSection = () => {
       
     } catch (error) {
       console.error('Unexpected error:', error);
+      setIsSubmitting(false); // Clear loading state on unexpected error
       toast({
         title: "Network Error",
         description: "Please check your connection and try again.",
         variant: "destructive"
       });
     } finally {
+      // This ensures loading state is always cleared
       setIsSubmitting(false);
     }
   }, [formData, validateFullName, validatePhone, validateEmail, trackClick, toast]);
