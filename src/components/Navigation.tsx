@@ -75,29 +75,29 @@ export const Navigation = () => {
             >
               {/* Mobile small (320px-374px): Two lines, smaller font */}
               <div className="block xs:hidden text-[11px] leading-[1.2] max-w-[180px]">
-                <div>E-Commerce Excellence</div>
+                <div>E Commerce Excellence</div>
                 <div>Academy</div>
               </div>
               
               {/* Mobile medium (375px-639px): Two lines, slightly larger */}
               <div className="hidden xs:block sm:hidden text-xs leading-[1.3] max-w-[200px]">
-                <div>E-Commerce Excellence</div>
+                <div>E Commerce Excellence</div>
                 <div>Academy</div>
               </div>
               
               {/* Tablet (640px-767px): One line, reduced font */}
               <div className="hidden sm:block md:hidden text-sm leading-tight">
-                E-Commerce Excellence Academy
+                E Commerce Excellence Academy
               </div>
               
               {/* Desktop small (768px-1023px): One line, good size */}
               <div className="hidden md:block lg:hidden text-base leading-tight">
-                E-Commerce Excellence Academy
+                E Commerce Excellence Academy
               </div>
               
               {/* Desktop large (1024px+): One line, full size */}
               <div className="hidden lg:block text-xl leading-tight">
-                E-Commerce Excellence Academy
+                E Commerce Excellence Academy
               </div>
             </button>
           </div>

@@ -84,7 +84,7 @@ const PrivacyPolicy = () => {
               If you have any questions about this privacy policy, please contact us at:
             </p>
             <div className="bg-secondary/20 p-4 rounded-lg">
-              <p><strong>E-Commerce Excellence Academy</strong></p>
+              <p><strong>E Commerce Excellence Academy</strong></p>
               <p>Email: ecommerceexcellenceacademy@outlook.com</p>
               <p>Phone: +92 370 2041152</p>
               <p>Address: C-2, Block D, North Nazimabad, Karachi</p>

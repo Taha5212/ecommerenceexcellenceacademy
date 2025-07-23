@@ -127,7 +127,7 @@ export const HeroSection = () => {
               <div className="aspect-video p-1">
                 <iframe 
                   src="https://www.youtube.com/embed/cPbFSvDd9aU" 
-                  title="E-Commerce Excellence Academy" 
+                  title="E Commerce Excellence Academy" 
                   className="w-full h-full rounded-2xl shadow-lg" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                   allowFullScreen
