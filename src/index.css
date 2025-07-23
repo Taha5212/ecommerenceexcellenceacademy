@@ -36,16 +36,20 @@ All colors MUST be HSL.
     --input: 214.3 31.8% 91.4%;
     --ring: 221 100% 34%;
 
-    /* Custom brand colors */
-    --brand-blue: 221 100% 34%;
-    --brand-gold: 45 95% 56%;
+    /* Custom brand colors - Updated per specifications */
+    --brand-blue: 221 100% 34%; /* Deep Blue #004aad */
+    --brand-gold: 45 95% 56%; /* Gold Accent #f9a825 */
     --brand-light-blue: 221 100% 96%;
     --brand-teal: 174 72% 56%;
     --brand-navy: 215 28% 17%;
+    --nav-gradient-start: 222 62% 14%; /* #0B1D39 */
+    --nav-gradient-end: 216 100% 33%; /* #0055A5 */
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--brand-blue)), hsl(221 100% 28%));
     --gradient-accent: linear-gradient(135deg, hsl(var(--brand-gold)), hsl(45 95% 50%));
+    --gradient-nav: linear-gradient(90deg, hsl(var(--nav-gradient-start)), hsl(var(--nav-gradient-end)));
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%), hsl(221 100% 98%));
     
     /* Shadows */
     --shadow-premium: 0 25px 50px -12px hsl(var(--brand-blue) / 0.25);

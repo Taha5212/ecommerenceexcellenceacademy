@@ -55,7 +55,13 @@ export default {
 				brand: {
 					blue: 'hsl(var(--brand-blue))',
 					gold: 'hsl(var(--brand-gold))',
-					'light-blue': 'hsl(var(--brand-light-blue))'
+					'light-blue': 'hsl(var(--brand-light-blue))',
+					navy: 'hsl(var(--brand-navy))',
+					teal: 'hsl(var(--brand-teal))'
+				},
+				nav: {
+					start: 'hsl(var(--nav-gradient-start))',
+					end: 'hsl(var(--nav-gradient-end))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -119,7 +125,9 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-accent': 'var(--gradient-accent)'
+				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-nav': 'var(--gradient-nav)',
+				'gradient-hero': 'var(--gradient-hero)'
 			},
 			boxShadow: {
 				'premium': 'var(--shadow-premium)',
