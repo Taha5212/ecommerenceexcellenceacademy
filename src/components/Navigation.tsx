@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, Lock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { EditProfileModal } from '@/components/EditProfileModal';
+import { ChangePasswordModal } from '@/components/ChangePasswordModal';
 
 const navItems = [
   { name: 'Home', href: '#hero' },
@@ -17,9 +19,11 @@ const navItems = [
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, displayName } = useAuth();
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -131,18 +135,26 @@ export const Navigation = () => {
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white/90 hover:text-brand-gold transition-all duration-300 rounded-lg hover:bg-white/10">
                       <User className="h-4 w-4" />
-                      <span className="max-w-32 truncate">{user.email}</span>
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg">
-                    <DropdownMenuItem onClick={() => navigate('/analytics')} className="cursor-pointer">
-                      <User className="h-4 w-4 mr-2" />
-                      Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </DropdownMenuItem>
+                       <span className="max-w-32 truncate">{displayName}</span>
+                     </button>
+                   </DropdownMenuTrigger>
+                   <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg z-[100]">
+                     <DropdownMenuItem onClick={() => navigate('/analytics')} className="cursor-pointer">
+                       <User className="h-4 w-4 mr-2" />
+                       Dashboard
+                     </DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => setShowEditProfile(true)} className="cursor-pointer">
+                       <Settings className="h-4 w-4 mr-2" />
+                       Edit Profile
+                     </DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => setShowChangePassword(true)} className="cursor-pointer">
+                       <Lock className="h-4 w-4 mr-2" />
+                       Change Password
+                     </DropdownMenuItem>
+                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
+                       <LogOut className="h-4 w-4 mr-2" />
+                       Logout
+                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
@@ -218,7 +230,7 @@ export const Navigation = () => {
                     transitionDelay: isOpen ? `${navItems.length * 50}ms` : '0ms'
                   }}>
                     <User className="h-4 w-4" />
-                    <span className="truncate">{user.email}</span>
+                    <span className="truncate">{displayName}</span>
                   </div>
                   <button
                     onClick={() => {
@@ -235,12 +247,40 @@ export const Navigation = () => {
                     Dashboard
                   </button>
                   <button
+                    onClick={() => {
+                      setShowEditProfile(true);
+                      setIsOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-white/90 hover:text-brand-gold hover:bg-white/10 ${
+                      isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: isOpen ? `${(navItems.length + 2) * 50}ms` : '0ms'
+                    }}
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowChangePassword(true);
+                      setIsOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-white/90 hover:text-brand-gold hover:bg-white/10 ${
+                      isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: isOpen ? `${(navItems.length + 3) * 50}ms` : '0ms'
+                    }}
+                  >
+                    Change Password
+                  </button>
+                  <button
                     onClick={handleLogout}
                     className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-lg transform hover:scale-105 text-red-400 hover:text-red-300 hover:bg-white/10 ${
                       isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
                     }`}
                     style={{
-                      transitionDelay: isOpen ? `${(navItems.length + 2) * 50}ms` : '0ms'
+                      transitionDelay: isOpen ? `${(navItems.length + 4) * 50}ms` : '0ms'
                     }}
                   >
                     Logout
@@ -282,6 +322,16 @@ export const Navigation = () => {
           </div>
         </div>
       </div>
+      
+      {/* Profile Management Modals */}
+      <EditProfileModal 
+        isOpen={showEditProfile} 
+        onClose={() => setShowEditProfile(false)} 
+      />
+      <ChangePasswordModal 
+        isOpen={showChangePassword} 
+        onClose={() => setShowChangePassword(false)} 
+      />
     </nav>
   );
 };
