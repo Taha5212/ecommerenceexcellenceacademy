@@ -14,33 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      active_sessions: {
-        Row: {
-          created_at: string
-          device_type: string
-          last_activity: string
-          page_url: string | null
-          session_id: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          device_type: string
-          last_activity?: string
-          page_url?: string | null
-          session_id: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          device_type?: string
-          last_activity?: string
-          page_url?: string | null
-          session_id?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       form_submissions: {
         Row: {
           email: string
@@ -163,14 +136,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_inactive_sessions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_old_analytics: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
