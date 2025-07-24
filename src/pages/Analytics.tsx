@@ -29,10 +29,10 @@ interface ChartData {
 interface ActiveSession {
   session_id: string;
   user_id: string | null;
-  last_activity: string;
+  created_at: string;
   device_type: string;
   page_url: string | null;
-  created_at: string;
+  event_type: string;
 }
 
 const chartConfig = {
@@ -71,48 +71,58 @@ export const Analytics = () => {
     try {
       const timeFilter = getTimeFilter(timeRange);
       
-      // Fetch all active sessions data
-      const { data: sessionData, error } = await supabase
-        .from('active_sessions')
+      // Fetch user analytics data instead of active_sessions
+      const { data: analyticsData, error } = await supabase
+        .from('user_analytics')
         .select('*')
         .gte('created_at', timeFilter)
-        .order('last_activity', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      setActiveSessions(sessionData || []);
+      // Transform analytics data to match our ActiveSession interface
+      const sessionData = analyticsData?.map(item => ({
+        session_id: item.session_id,
+        user_id: item.user_id,
+        created_at: item.created_at,
+        device_type: item.device_type,
+        page_url: item.page_url,
+        event_type: item.event_type
+      })) || [];
+
+      setActiveSessions(sessionData);
 
       // Calculate summary metrics
-      const totalSessions = sessionData?.length || 0;
-      const uniqueUsers = new Set(sessionData?.filter(s => s.user_id).map(s => s.user_id)).size;
+      const totalSessions = new Set(sessionData.map(s => s.session_id)).size;
+      const uniqueUsers = new Set(sessionData.filter(s => s.user_id).map(s => s.user_id)).size;
       
       // Find most active page
-      const pageCounts = sessionData?.reduce((acc: Record<string, number>, session) => {
+      const pageCounts = sessionData.reduce((acc: Record<string, number>, session) => {
         const page = session.page_url || '/';
         acc[page] = (acc[page] || 0) + 1;
         return acc;
-      }, {}) || {};
+      }, {});
 
       const mostActivePageEntry = Object.entries(pageCounts).sort(([,a], [,b]) => b - a)[0];
       const mostActivePage = mostActivePageEntry?.[0] || '';
       const mostActivePageViews = mostActivePageEntry?.[1] || 0;
 
-      // Count currently active sessions (last 30 minutes)
+      // Count recent sessions (last 30 minutes)
       const activeThreshold = new Date(Date.now() - 30 * 60 * 1000);
-      const activeSessions = sessionData?.filter(s => new Date(s.last_activity) > activeThreshold).length || 0;
+      const recentSessions = sessionData.filter(s => new Date(s.created_at) > activeThreshold).length;
 
       setData({
         totalSessions,
         uniqueUsers,
         mostActivePage,
         mostActivePageViews,
-        activeSessions
+        activeSessions: recentSessions
       });
 
       // Fetch chart data
       await Promise.all([
         fetchSessionsOverTime(timeFilter),
-        fetchDeviceBreakdown(sessionData || [])
+        fetchDeviceBreakdown(sessionData)
       ]);
 
     } catch (error) {
@@ -135,7 +145,7 @@ export const Analytics = () => {
 
   const fetchSessionsOverTime = async (timeFilter: string) => {
     const { data } = await supabase
-      .from('active_sessions')
+      .from('user_analytics')
       .select('created_at')
       .gte('created_at', timeFilter)
       .order('created_at');
@@ -410,7 +420,7 @@ export const Analytics = () => {
                 ) : (
                   filteredSessions.slice(0, 50).map((session) => {
                     const DeviceIcon = DEVICE_ICONS[session.device_type as keyof typeof DEVICE_ICONS] || Monitor;
-                    const isActive = new Date(session.last_activity) > new Date(Date.now() - 30 * 60 * 1000);
+                    const isActive = new Date(session.created_at) > new Date(Date.now() - 30 * 60 * 1000);
                     
                     return (
                       <TableRow key={session.session_id} className="hover:bg-muted/20">
@@ -433,7 +443,7 @@ export const Analytics = () => {
                           </div>
                         </TableCell>
                         <TableCell className="text-sm">
-                          {format(new Date(session.last_activity), 'MMM dd, HH:mm')}
+                          {format(new Date(session.created_at), 'MMM dd, HH:mm')}
                         </TableCell>
                         <TableCell>
                           <Badge variant={isActive ? "default" : "secondary"} className="gap-1">
