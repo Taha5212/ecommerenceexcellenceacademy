@@ -3,28 +3,28 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 export const FAQSection = () => {
   const faqs = [
     {
-      question: "What is the duration of the program?",
-      answer: "The program is designed to be completed in 3 months with comprehensive training covering all aspects of e commerce business development."
+      question: "What makes Ecommerence Excellence Academy the best ecommerce training in Pakistan?",
+      answer: "Ecommerence Excellence Academy offers comprehensive Amazon FBA course in Pakistan, dropshipping training in Urdu, and practical digital marketing course. Our proven curriculum helps students start successful ecommerce stores and make money online."
     },
     {
-      question: "Do I need any prior experience in e commerce?",
-      answer: "No prior experience is required. Our program is designed for complete beginners and will take you from zero to profitable e commerce business owner."
+      question: "Can I learn Amazon FBA course in Pakistan with no experience?",
+      answer: "Absolutely! Our Amazon FBA course in Pakistan is designed for complete beginners. We teach you step-by-step how to start an ecommerce store, find profitable products, and scale your online business to make money online."
     },
     {
-      question: "Is the training available online or in-person?",
-      answer: "We offer both in-person and online training options to accommodate different learning preferences and schedules."
+      question: "Is dropshipping training available in Urdu language?",
+      answer: "Yes, we provide comprehensive dropshipping training in Urdu. Our instructors teach digital marketing strategies and how to start ecommerce store using dropshipping model to help you learn online business effectively."
     },
     {
-      question: "What kind of support do I get after completing the program?",
-      answer: "You'll receive ongoing mentorship, access to our alumni network, and continued support to ensure your e commerce success."
+      question: "What digital marketing skills will I learn at Ecommerence Excellence Academy?",
+      answer: "Our digital marketing course covers Facebook ads, Google ads, social media marketing, SEO, and conversion optimization. These skills are essential for freelancing and ecommerce success in the Pakistani market."
     },
     {
-      question: "What is the investment for this program?",
-      answer: "Please contact us for detailed pricing information. We offer flexible payment plans and the ROI typically pays for the program within the first few months."
+      question: "How can I start making money online after this ecommerce training?",
+      answer: "After completing our best ecommerce training in Pakistan, you'll have the skills to start your ecommerce store, work as a freelancer, or offer digital marketing services. Many students start making money online within weeks of completing the course."
     },
     {
-      question: "How do I know if this program is right for me?",
-      answer: "If you're serious about building a successful e commerce business and willing to put in the work, this program is perfect for you. We provide all the tools, knowledge, and support you need."
+      question: "Do you provide support for freelancing and ecommerce business setup?",
+      answer: "Yes, Ecommerence Excellence Academy provides ongoing mentorship for both freelancing and ecommerce ventures. We help you learn online business strategies and provide practical guidance to start and scale your digital business."
     }
   ];
 

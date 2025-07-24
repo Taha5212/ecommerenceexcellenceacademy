@@ -230,7 +230,7 @@ export const HeroSection = () => {
               <div className="aspect-video p-1">
                 <iframe 
                   src="https://www.youtube.com/embed/cPbFSvDd9aU" 
-                  title="Ecommerence Excellence Academy" 
+                  title="Ecommerence Excellence Academy - Best Amazon FBA course in Pakistan, learn dropshipping in Urdu and digital marketing" 
                   className="w-full h-full rounded-2xl shadow-lg" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                   allowFullScreen
@@ -243,12 +243,13 @@ export const HeroSection = () => {
           <div className="animate-slide-in-right space-y-8 lg:space-y-10">
             <div className="text-center lg:text-left space-y-4 sm:space-y-6">
               <h1 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brand-blue leading-[1.1] tracking-tight px-2 sm:px-0">
+                Learn Online Business with
                 <span className="text-brand-gold block bg-gradient-to-r from-brand-gold to-brand-gold/90 bg-clip-text text-transparent mt-1 sm:mt-2">
                   Ecommerence Excellence Academy
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-brand-blue/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0 px-2 sm:px-0">
-                Master Amazon FBA, Dropshipping & Digital Marketing in just 3 months
+                Best Amazon FBA course in Pakistan | Master dropshipping in Urdu, digital marketing course, and start your ecommerce store to make money online
               </p>
             </div>
 

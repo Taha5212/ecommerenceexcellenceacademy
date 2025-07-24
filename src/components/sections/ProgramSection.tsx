@@ -3,14 +3,14 @@ import { CheckCircle, Clock, MapPin, Globe } from 'lucide-react';
 
 export const ProgramSection = () => {
   const modules = [
-    'Amazon FBA',
-    'Amazon FBM', 
-    'Wholesale',
-    'Private Label',
-    'Dropshipping',
-    'Basics of Artificial Intelligence',
-    'Basics of Digital Marketing',
-    'English Language for E Commerce'
+    'Amazon FBA Course in Pakistan',
+    'Amazon FBM Training', 
+    'Wholesale Business Setup',
+    'Private Label Strategies',
+    'Dropshipping in Urdu',
+    'Digital Marketing Course',
+    'Freelancing and Ecommerce Skills',
+    'Learn Online Business Fundamentals'
   ];
 
   return (
@@ -18,11 +18,11 @@ export const ProgramSection = () => {
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16 animate-fade-in">
           <h2 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary mb-4 sm:mb-6 px-2">
-            Our Premium Training Program
+            Best Ecommerce Training in Pakistan
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto px-2 leading-relaxed">
-            Learn everything you need to build a successful e commerce business in just 3 months. 
-            This comprehensive program covers:
+            Learn online business with our comprehensive Amazon FBA course in Pakistan. Master dropshipping in Urdu, 
+            digital marketing course, and start your ecommerce store to make money online in just 3 months.
           </p>
         </div>
 

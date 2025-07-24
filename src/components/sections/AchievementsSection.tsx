@@ -5,23 +5,27 @@ export const AchievementsSection = () => {
   const achievements = [
     {
       image: "/lovable-uploads/563ffb69-5e88-42a8-9627-5c4327181240.png",
-      title: "Best Teacher Award",
-      description: "Recognizing outstanding performance"
+      title: "Best Ecommerce Training Award",
+      description: "Recognized for excellence in Amazon FBA course in Pakistan",
+      alt: "Award certificate for best ecommerce training in Pakistan - Ecommerence Excellence Academy Amazon FBA course recognition"
     },
     {
       image: "/lovable-uploads/6ad70b31-9a43-43e4-808d-04b5cb36ff42.png",
-      title: "Excellence Certificate",
-      description: "Achievement in e commerce training"
+      title: "Digital Marketing Course Excellence",
+      description: "Achievement in dropshipping and digital marketing training",
+      alt: "Excellence certificate for digital marketing course and dropshipping in Urdu training at Ecommerence Excellence Academy"
     },
     {
       image: "/lovable-uploads/6bd9f11a-0298-4360-b767-de3df666c974.png",
-      title: "Golden Achievement",
-      description: "Top performer recognition"
+      title: "Top Online Business Mentor",
+      description: "Recognition for helping students learn online business",
+      alt: "Golden achievement award for teaching students to make money online and start ecommerce store"
     },
     {
       image: "/lovable-uploads/5b2eb777-5b43-47af-b70d-ddc48619b63c.png",
-      title: "Graduation Ceremony",
-      description: "Our successful batch completion"
+      title: "Successful Students Graduation",
+      description: "Students who mastered freelancing and ecommerce",
+      alt: "Graduation ceremony of successful students from Ecommerence Excellence Academy who learned Amazon FBA and digital marketing"
     }
   ];
 
@@ -35,10 +39,10 @@ export const AchievementsSection = () => {
             <Award className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-accent" />
           </div>
           <h2 className="font-montserrat font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary mb-4 sm:mb-6 px-2">
-            Our Journey & Achievements
+            Ecommerence Excellence Academy Achievements
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
-            Celebrating success stories and milestones of our students and academy
+            Celebrating our recognition as the best ecommerce training in Pakistan, with awards for Amazon FBA course excellence and digital marketing success
           </p>
         </div>
 
@@ -48,7 +52,7 @@ export const AchievementsSection = () => {
               <div className="aspect-square overflow-hidden">
                 <img 
                   src={achievement.image} 
-                  alt={achievement.title}
+                  alt={achievement.alt}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
               </div>

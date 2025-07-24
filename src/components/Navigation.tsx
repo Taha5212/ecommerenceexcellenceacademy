@@ -11,8 +11,9 @@ import { ChangePasswordModal } from '@/components/ChangePasswordModal';
 
 const navItems = [
   { name: 'Home', href: '#hero' },
+  { name: 'About', href: '/about' },
   { name: 'Courses', href: '#program' },
-  { name: 'About Us', href: '#instructor' },
+  { name: 'Instructor', href: '#instructor' },
   { name: 'Gallery', href: '#achievements' },
   { name: 'Contact', href: '#footer' },
 ];
@@ -72,6 +73,14 @@ export const Navigation = () => {
   }, [location.pathname]);
 
   const handleNavigation = (href: string) => {
+    // Handle regular page navigation
+    if (href.startsWith('/')) {
+      navigate(href);
+      setIsOpen(false);
+      return;
+    }
+    
+    // Handle anchor navigation
     if (location.pathname !== '/') {
       // If not on home page, navigate to home first then scroll
       navigate('/');
@@ -114,7 +123,8 @@ export const Navigation = () => {
                   key={item.name}
                   onClick={() => handleNavigation(item.href)}
                   className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg group hover:scale-105 ${
-                    activeSection === item.href.substring(1)
+                    (item.href.startsWith('/') && location.pathname === item.href) || 
+                    (!item.href.startsWith('/') && activeSection === item.href.substring(1))
                       ? 'text-brand-gold bg-white/15 shadow-sm'
                       : 'text-white/90 hover:text-brand-gold hover:bg-white/10'
                   }`}
