@@ -111,12 +111,12 @@ export const Navigation = () => {
               className="flex items-center space-x-2 sm:space-x-3 font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left"
             >
               <img 
-                src="/lovable-uploads/50af3e44-4ad3-4150-9650-b9791aa3b3a8.png" 
-                alt="Ecommerce Excellence Academy Logo" 
-                className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 object-contain"
+                src="/lovable-uploads/edcdc644-9512-4107-bcd0-0086c5bef308.png" 
+                alt="E-commerce Excellence Academy Logo" 
+                className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 object-contain filter brightness-0 invert"
               />
-              <span className="whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg">
-                Ecommerence Excellence Academy
+              <span className="hidden lg:block whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg">
+                E-commerce Excellence Academy
               </span>
             </button>
           </div>
