@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,8 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Shield } from 'lucide-react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export const Auth = () => {
   const [email, setEmail] = useState('');
@@ -16,23 +18,30 @@ export const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { trackLogin, trackSignup } = useAnalytics();
+  const { user } = useAuth();
+  const captchaRef = useRef<HCaptcha>(null);
 
   const defaultTab = searchParams.get('tab') || 'login';
 
   useEffect(() => {
-    // Check if user is already logged in
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate('/');
-      }
-    };
-    checkUser();
-  }, [navigate]);
+    // Check if user is already logged in and redirect to dashboard
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  const onCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
+
+  const onCaptchaExpire = () => {
+    setCaptchaToken(null);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +57,32 @@ export const Auth = () => {
         return;
       }
 
+      if (!captchaToken) {
+        toast({
+          title: "Security Verification Required",
+          description: "Please complete the security verification",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Verify captcha with edge function
+      const { data: captchaResult, error: captchaError } = await supabase.functions.invoke('verify-captcha', {
+        body: { token: captchaToken }
+      });
+
+      if (captchaError || !captchaResult?.success) {
+        toast({
+          title: "Security Verification Failed",
+          description: "Please try again",
+          variant: "destructive"
+        });
+        // Reset captcha
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -59,22 +94,29 @@ export const Auth = () => {
           description: error.message,
           variant: "destructive"
         });
+        // Reset captcha on error
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
         return;
       }
 
       trackLogin('email');
       toast({
         title: "Welcome back!",
-        description: "You've been successfully logged in.",
+        description: "Redirecting to dashboard...",
       });
       
-      navigate('/');
+      // Redirect to dashboard after successful login
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Login Error",
         description: "An unexpected error occurred",
         variant: "destructive"
       });
+      // Reset captcha on error
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -103,16 +145,42 @@ export const Auth = () => {
         return;
       }
 
-      if (password.length < 6) {
+      if (password.length < 8) {
         toast({
           title: "Password Too Short",
-          description: "Password must be at least 6 characters",
+          description: "Password must be at least 8 characters for security",
           variant: "destructive"
         });
         return;
       }
 
-      const redirectUrl = `${window.location.origin}/`;
+      if (!captchaToken) {
+        toast({
+          title: "Security Verification Required",
+          description: "Please complete the security verification",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Verify captcha with edge function
+      const { data: captchaResult, error: captchaError } = await supabase.functions.invoke('verify-captcha', {
+        body: { token: captchaToken }
+      });
+
+      if (captchaError || !captchaResult?.success) {
+        toast({
+          title: "Security Verification Failed",
+          description: "Please try again",
+          variant: "destructive"
+        });
+        // Reset captcha
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
+        return;
+      }
+
+      const redirectUrl = `${window.location.origin}/dashboard`;
       
       const { error } = await supabase.auth.signUp({
         email,
@@ -128,6 +196,9 @@ export const Auth = () => {
           description: error.message,
           variant: "destructive"
         });
+        // Reset captcha on error
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
         return;
       }
 
@@ -138,6 +209,7 @@ export const Auth = () => {
         duration: 8000
       });
       
+      // Redirect to home page, user will be redirected to dashboard after email confirmation
       navigate('/');
     } catch (error) {
       toast({
@@ -145,6 +217,9 @@ export const Auth = () => {
         description: "An unexpected error occurred",
         variant: "destructive"
       });
+      // Reset captcha on error
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -208,10 +283,26 @@ export const Auth = () => {
                   </div>
                 </div>
                 
+                {/* Security Verification */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-brand-blue" />
+                    Security Verification
+                  </Label>
+                  <div className="flex justify-center">
+                    <HCaptcha
+                      ref={captchaRef}
+                      sitekey="50b2fe65-b00b-4b9e-ad62-3ba471098be2" // Replace with your hCaptcha site key
+                      onVerify={onCaptchaVerify}
+                      onExpire={onCaptchaExpire}
+                    />
+                  </div>
+                </div>
+                
                 <Button 
                   type="submit" 
                   className="w-full bg-brand-blue hover:bg-brand-blue/90"
-                  disabled={loading}
+                  disabled={loading || !captchaToken}
                 >
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
@@ -271,10 +362,26 @@ export const Auth = () => {
                   />
                 </div>
                 
+                {/* Security Verification */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-brand-blue" />
+                    Security Verification
+                  </Label>
+                  <div className="flex justify-center">
+                    <HCaptcha
+                      ref={captchaRef}
+                      sitekey="50b2fe65-b00b-4b9e-ad62-3ba471098be2" // Replace with your hCaptcha site key
+                      onVerify={onCaptchaVerify}
+                      onExpire={onCaptchaExpire}
+                    />
+                  </div>
+                </div>
+                
                 <Button 
                   type="submit" 
                   className="w-full bg-brand-blue hover:bg-brand-blue/90"
-                  disabled={loading}
+                  disabled={loading || !captchaToken}
                 >
                   {loading ? 'Creating Account...' : 'Create Account'}
                 </Button>
