@@ -108,9 +108,16 @@ export const Navigation = () => {
           <div className="flex-shrink-0 flex-1 md:flex-none pr-4 md:pr-0">
             <button
               onClick={() => handleNavigation('#hero')}
-              className="font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg"
+              className="flex items-center space-x-2 sm:space-x-3 font-montserrat font-bold text-white tracking-tight hover:text-brand-gold transition-all duration-300 cursor-pointer group text-left"
             >
-              Ecommerence Excellence Academy
+              <img 
+                src="/lovable-uploads/50af3e44-4ad3-4150-9650-b9791aa3b3a8.png" 
+                alt="Ecommerce Excellence Academy Logo" 
+                className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 object-contain"
+              />
+              <span className="whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg">
+                Ecommerence Excellence Academy
+              </span>
             </button>
           </div>
 
