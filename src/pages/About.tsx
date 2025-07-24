@@ -1,9 +1,12 @@
 import { Card } from '@/components/ui/card';
 import { CheckCircle, Target, Users, Award } from 'lucide-react';
+import { Navigation } from '@/components/Navigation';
 
 export const About = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-brand-light-blue/30 to-background">
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-gradient-to-br from-background via-brand-light-blue/30 to-background">
       {/* Hero Section */}
       <section className="py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4 sm:px-6">
@@ -211,5 +214,6 @@ export const About = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
