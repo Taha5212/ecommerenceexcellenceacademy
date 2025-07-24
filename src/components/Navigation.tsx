@@ -10,7 +10,7 @@ import { EditProfileModal } from '@/components/EditProfileModal';
 import { ChangePasswordModal } from '@/components/ChangePasswordModal';
 
 const navItems = [
-  { name: 'Home', href: '#hero' },
+  { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
   { name: 'Courses', href: '#program' },
   { name: 'Instructor', href: '#instructor' },
