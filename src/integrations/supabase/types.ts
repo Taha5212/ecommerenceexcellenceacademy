@@ -14,150 +14,16 @@ export type Database = {
   }
   public: {
     Tables: {
-      form_submissions: {
-        Row: {
-          email: string
-          id: string
-          message: string | null
-          name: string
-          phone: string | null
-          submitted_at: string
-          user_id: string | null
-        }
-        Insert: {
-          email: string
-          id?: string
-          message?: string | null
-          name: string
-          phone?: string | null
-          submitted_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          email?: string
-          id?: string
-          message?: string | null
-          name?: string
-          phone?: string | null
-          submitted_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          display_name: string | null
-          id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          display_name?: string | null
-          id?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          display_name?: string | null
-          id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_analytics: {
-        Row: {
-          created_at: string
-          device_type: string
-          event_details: Json | null
-          event_type: string
-          id: string
-          ip_address: unknown | null
-          page_url: string | null
-          session_id: string
-          user_agent: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          device_type: string
-          event_details?: Json | null
-          event_type: string
-          id?: string
-          ip_address?: unknown | null
-          page_url?: string | null
-          session_id: string
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          device_type?: string
-          event_details?: Json | null
-          event_type?: string
-          id?: string
-          ip_address?: unknown | null
-          page_url?: string | null
-          session_id?: string
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: Database["public"]["Enums"]["app_role"]
-      }
-      has_role: {
-        Args: {
-          _user_id: string
-          _role: Database["public"]["Enums"]["app_role"]
-        }
-        Returns: boolean
-      }
-      validate_email: {
-        Args: { email_input: string }
-        Returns: boolean
-      }
-      validate_phone: {
-        Args: { phone_input: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -284,8 +150,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["admin", "moderator", "user"],
-    },
+    Enums: {},
   },
 } as const
